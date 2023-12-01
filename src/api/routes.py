@@ -19,6 +19,7 @@ from sqlalchemy.orm import load_only
 
 
 
+
 @api.route("/")
 def hello_world():
     return "<p>Hello, World!</p>"
@@ -43,7 +44,7 @@ def create_token():
     print("Username:", user.username)
 
     # Modifica la creación del token para incluir la ruta completa de la foto
-    foto_path = f"http://localhost:5000/uploads/{user.foto}" if user.foto else None
+    # foto_path = f"http://localhost:5000/uploads/{user.foto}" if user.foto else None
 
     # Crea el token con información adicional en la carga útil
     access_token = create_access_token(
@@ -51,7 +52,7 @@ def create_token():
         additional_claims={
             "username": user.username,
             "isAdmin": user.isAdmin,
-            "foto": foto_path  # Cambia aquí para incluir la ruta completa
+            # "foto": foto_path  # Cambia aquí para incluir la ruta completa
         }
     )
 
@@ -64,24 +65,24 @@ def create_token():
         "username": user.username,
         "access_token": access_token,
         "isAdmin": user.isAdmin,
-        "foto": foto_path
+        # "foto": foto_path
     })
 
 @api.route("/signup", methods=["POST"])
 def signup():
-    if 'file' not in request.files:
-        return jsonify({'error': 'No file part'}), 400
+    # if 'file' not in request.files:
+    #     return jsonify({'error': 'No file part'}), 400
 
-    file = request.files['file']
-    if file.filename == '':
-        return jsonify({'error': 'No selected file'}), 400
+    # file = request.files['file']
+    # if file.filename == '':
+    #     return jsonify({'error': 'No selected file'}), 400
 
     username = request.form.get("username", None)
     password = request.form.get("password", None)
 
-    if file and allowed_file(file.filename):
-        filename = secure_filename(file.filename)
-        file.save(os.path.join(os.path.abspath(api.config['UPLOAD_FOLDER']), filename))
+    # if file and allowed_file(file.filename):
+    #     filename = secure_filename(file.filename)
+    #     file.save(os.path.join(os.path.abspath(api.config['UPLOAD_FOLDER']), filename))
 
     if not username or not password:
         return jsonify({"error": "Username and password are required"}), 400
@@ -91,7 +92,7 @@ def signup():
         return jsonify({"error": "Username already exists"}), 409
 
     hashed_password = bcrypt.generate_password_hash(password).decode("utf-8")
-    new_user = User(username=username, password=hashed_password, isAdmin=request.form.get("isAdmin", "user"), foto=filename)
+    new_user = User(username=username, password=hashed_password, isAdmin=request.form.get("isAdmin", "user"))
     db.session.add(new_user)
     db.session.commit()
 
@@ -99,7 +100,7 @@ def signup():
         "id": new_user.id,
         "username": new_user.username,
         "isAdmin": new_user.isAdmin,
-        "foto": new_user.foto
+        # "foto": new_user.foto
     })
  
  # Ruta para obtener la información de los usuarios

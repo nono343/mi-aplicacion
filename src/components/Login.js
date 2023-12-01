@@ -22,7 +22,7 @@ function Login(props) {
     function btnlogin(event) {
         axios({
             method: "POST",
-            url: "http://localhost:5000/logintoken",
+            url: "http://catalogo.granadalapalma.com:5000/logintoken",
             data: {
                 username: loginForm.username,
                 password: loginForm.password

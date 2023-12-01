@@ -21,7 +21,7 @@ function AdminCategorias(props) {
 
     const fetchCategories = () => {
         // Realiza una solicitud GET para obtener las categorías
-        axios.get("http://localhost:5000/categorias")
+        axios.get("http://catalogo.granadalapalma.com:5000/categorias")
             .then((response) => setCategories(response.data.categories))
             .catch((error) => console.error('Error al obtener las categorías', error));
     };
@@ -51,7 +51,7 @@ function AdminCategorias(props) {
                 formData.append('nombreesp', nombreEspCategory);
                 formData.append('nombreeng', nombreEngCategory);
 
-                const response = await axios.post('http://localhost:5000/upload_category', formData, {
+                const response = await axios.post('http://catalogo.granadalapalma.com:5000/upload_category', formData, {
                     headers: { 'Content-Type': 'multipart/form-data' },
                 });
 
@@ -75,7 +75,7 @@ function AdminCategorias(props) {
     const handleDeleteCategory = async (id) => {
         try {
             // Realiza una solicitud DELETE para eliminar la categoría
-            await axios.delete(`http://localhost:5000/categorias/${id}`);
+            await axios.delete(`http://catalogo.granadalapalma.com:5000/categorias/${id}`);
             // Actualiza el estado de la lista de categorías
             fetchCategories();
         } catch (error) {
@@ -110,7 +110,7 @@ function AdminCategorias(props) {
                 formData.append("nombreeng", nombreEngCategory);
 
                 const response = await axios.put(
-                    `http://localhost:5000/edit_category/${editingCategory.id}`,
+                    `http://catalogo.granadalapalma.com:5000/edit_category/${editingCategory.id}`,
                     formData,
                     { headers: { "Content-Type": "multipart/form-data" } }
                 );

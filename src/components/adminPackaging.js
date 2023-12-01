@@ -844,7 +844,7 @@ function AdminPackaging(props) {
                                     {editingPackaging && editingPackaging.id === packaging.id ? (
                                         // Mostrar botones de guardado y cancelación durante la edición
                                         <>
-                                            <button className="btn btn-outline btn-success mb-1" onClick={handleSaveUsers}>Guardar</button>
+                                            <button className="btn btn-outline btn-success" onClick={handleSaveUsers}>Guardar</button>
                                             <button className="btn btn-outline btn-error" onClick={handleCancelEdit}>Cancelar</button>
                                         </>
                                     ) : (

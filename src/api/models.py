@@ -20,7 +20,7 @@ class User(db.Model):
     username = db.Column(db.String(150), unique=True)
     password = db.Column(db.Text, nullable=False)
     isAdmin = db.Column(db.String(10), nullable=False)
-    foto = db.Column(db.String(120), nullable=True)  # Agrega la columna para la foto
+    # foto = db.Column(db.String(120), nullable=True)  # Agrega la columna para la foto
 
     
     # Relación many-to-many con Packagings
@@ -31,7 +31,7 @@ class User(db.Model):
             'id': self.id,
             'username': self.username,
             'isAdmin': self.isAdmin,
-            'foto': self.foto,
+            # 'foto': self.foto,
         }
 
 class Categorias(db.Model):

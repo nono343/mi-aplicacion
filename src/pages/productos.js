@@ -251,7 +251,7 @@ const DetalleProducto = (props) => {
                                             )}
                                         </td>
                                         <td className="py-2 px-4 border-b">
-                                            {packaging.nombreesp}
+                                            {props.isSpanish ? packaging.nombreesp : packaging.nombreeng}
                                         </td>
                                         <td className="py-2 px-4 border-b">
                                             {packaging.marca}

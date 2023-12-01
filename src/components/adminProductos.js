@@ -15,7 +15,6 @@ function AdminProductos() {
     const [editingProduct, setEditingProduct] = useState(null);
     const [categories, setCategories] = useState([]);
 
-    console.log(products)
     // Función para obtener la lista de categorías desde el servidor
     useEffect(() => {
         fetchCategories();
@@ -35,6 +34,7 @@ function AdminProductos() {
             .catch(error => console.error('Error al obtener la lista de productos:', error));
     }, []);
 
+    
 
     const handleFileChangeProduct = (event) => {
         setSelectedFileProduct(event.target.files[0]);
@@ -72,7 +72,22 @@ function AdminProductos() {
         }
     };
 
+    // Función para limpiar el formulario
+    const clearForm = () => {
+        console.log("Limpiando formulario...");
+        setSelectedFileProduct(null);
+        setSelectedFileProduct2(null);
+        setUploadedFileNameProduct("");
+        setNombreEspProduct("");
+        setNombreEngProduct("");
+        setDescripcionEsp("");
+        setDescripcionEng("");
+        setCategoryId("");
+        setMonthProduction([]);
+        setEditingProduct(null);
+    };
 
+    // Función para cargar un producto
     const handleUploadProduct = async () => {
         if (
             selectedFileProduct &&
@@ -109,12 +124,17 @@ function AdminProductos() {
                     setProducts(updatedProductsResponse.data.products || []);
 
                     console.log('Product uploaded successfully:', response.data.message);
+
+                    // Después de cargar, limpia el formulario
+                    clearForm();
                 } else {
                     console.error('Error al cargar el producto con foto');
                 }
             } catch (error) {
                 console.error('Error al cargar el producto con foto', error);
             }
+        } else {
+            console.error('Faltan campos obligatorios para cargar el producto');
         }
     };
 
@@ -155,52 +175,48 @@ function AdminProductos() {
         setDescripcionEng("");
         setSelectedFileProduct(null);
         setSelectedFileProduct2(null);
+        clearForm();
     };
 
-    // Función para actualizar una categoría después de editar
-    const handleUpdateProduct = async () => {
-        if (selectedFileProduct && nombreEspProduct && nombreEngProduct && categoryId) {
+// Función para actualizar una categoría después de editar
+const handleUpdateProduct = async () => {
+    if (selectedFileProduct && nombreEspProduct && nombreEngProduct && categoryId) {
+        try {
+            const formData = new FormData();
+            formData.append('file', selectedFileProduct);
+            formData.append('file2', selectedFileProduct2);
+            formData.append('nombreesp', nombreEspProduct);
+            formData.append('nombreeng', nombreEngProduct);
+            formData.append('descripcionesp', descripcionEsp);
+            formData.append('descripcioneng', descripcionEng);
+            formData.append('categoria', categoryId);
 
-            try {
-                const formData = new FormData();
-                formData.append('file', selectedFileProduct);
-                formData.append('file2', selectedFileProduct2); // Append the second file
-                formData.append('nombreesp', nombreEspProduct);
-                formData.append('nombreeng', nombreEngProduct);
-                formData.append('descripcionesp', descripcionEsp);
-                formData.append('descripcioneng', descripcionEng);
-                formData.append('categoria', categoryId);
+            const response = await axios.put(
+                `http://localhost:5000/edit_product/${editingProduct.id}`,
+                formData,
+                { headers: { "Content-Type": "multipart/form-data" } }
+            );
 
-                const response = await axios.put(
-                    `http://localhost:5000/edit_product/${editingProduct.id}`,
-                    formData,
-                    { headers: { "Content-Type": "multipart/form-data" } }
-                );
+            // Verifica la respuesta del servidor
+            if (response.status === 200) {
+                // Actualiza el estado de la lista de categorías y reinicia los estados de edición
+                const updatedProductsResponse = await axios.get('http://localhost:5000/productos');
+                setProducts(updatedProductsResponse.data.products || []);
 
-                // Verifica la respuesta del servidor
-                if (response.status === 200) {
-                    // Actualiza el estado de la lista de categorías y reinicia los estados de edición
-                    const updatedProductsResponse = await axios.get('http://localhost:5000/productos');
-                    setProducts(updatedProductsResponse.data.products || []);
+                console.log('Product updated successfully:', response.data.message);
 
-                    setUploadedFileNameProduct(response.data.message);
-                    setEditingProduct(null);
-                    setNombreEspProduct("");
-                    setNombreEngProduct("");
-                    setDescripcionEsp("");
-                    setDescripcionEng("");
-                    setSelectedFileProduct(null);
-                    setSelectedFileProduct2(null);
-                } else {
-                    console.error("Error al cargar la categoría con foto");
-                }
-            } catch (error) {
-                console.error("Error al cargar la categoría con foto", error);
+                // Después de actualizar, limpia el formulario
+                clearForm();
+            } else {
+                console.error("Error al actualizar el producto con foto");
             }
-        } else {
-            console.error("Todos los campos son obligatorios");
+        } catch (error) {
+            console.error("Error al actualizar el producto con foto", error);
         }
-    };
+    } else {
+        console.error("Todos los campos son obligatorios");
+    }
+};
 
 
     return (
@@ -210,25 +226,25 @@ function AdminProductos() {
                     <label className="label">
                         <span className="label-text">Nombre Producto Español</span>
                     </label>
-                    <input type="text" id="name_product_esp" className="input input-bordered w-full max-w-xs" placeholder="Nombre Producto Español" onChange={handleNombreEspChangeProduct} required />
+                    <input type="text" id="name_product_esp" className="input input-bordered w-full max-w-xs" placeholder="Nombre Producto Español" value={nombreEspProduct} onChange={handleNombreEspChangeProduct} required />
                 </div>
                 <div className="form-control w-full max-w-xs">
                     <label className="label">
                         <span className="label-text">Nombre Producto Inglés</span>
                     </label>
-                    <input type="text" id="name_product_eng" className="input input-bordered w-full max-w-xs" placeholder="Nombre Producto Inglés" onChange={handleNombreEngChangeProduct} required />
+                    <input type="text" id="name_product_eng" className="input input-bordered w-full max-w-xs" placeholder="Nombre Producto Inglés" value={nombreEngProduct} onChange={handleNombreEngChangeProduct} required />
                 </div>
                 <div className="form-control w-full max-w-xs">
                     <label className="label">
                         <span className="label-text">Descripción Producto Español</span>
                     </label>
-                    <input type="text" id="description_product_esp" className="input input-bordered w-full max-w-xs" placeholder="Descripción Producto Español" onChange={handleDescripcionEspChange} required />
+                    <input type="text" id="description_product_esp" className="input input-bordered w-full max-w-xs" placeholder="Descripción Producto Español" value={descripcionEsp}  onChange={handleDescripcionEspChange} required />
                 </div>
                 <div className="form-control w-full max-w-xs">
                     <label className="label">
                         <span className="label-text">Descripción Producto Inglés</span>
                     </label>
-                    <input type="text" id="description_product_eng" className="input input-bordered w-full max-w-xs" placeholder="Descripción Producto Inglés" onChange={handleDescripcionEngChange} required />
+                    <input type="text" id="description_product_eng" className="input input-bordered w-full max-w-xs" placeholder="Descripción Producto Inglés" value={descripcionEng} onChange={handleDescripcionEngChange} required />
                 </div>
                 <div className='form-control w-full max-w-xs"'>
                     <label className="label">
@@ -299,6 +315,7 @@ function AdminProductos() {
                             <th className="hidden md:table-cell">Descripción</th>
                             <th className="hidden md:table-cell">Descripción Inglés</th>
                             <th>Meses de Producción</th>
+                            <th>Editar Producto</th>
                             <th>Eliminar Producto</th>
                         </tr>
                     </thead>
@@ -338,9 +355,11 @@ function AdminProductos() {
                                             product.meses_produccion.map((mes) => <span key={mes}>{mes} </span>)}
                                     </td>
                                     <td>
-                                        <button onClick={() => handleEditProducts(product)} className="btn btn-outline btn-info">
+                                        <button onClick={() => handleEditProducts(product)} className="btn btn-outline btn-warning">
                                             Editar
                                         </button>
+                                    </td>
+                                    <td>
                                         <button
                                             className="btn btn-outline btn-error"
                                             onClick={() => handleDelete(product.id)}

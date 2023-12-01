@@ -33,9 +33,9 @@ const ProductSearch = ({ isSpanish, setIsSearching }) => {
         />
       </div>
       {searchResults.length > 0 && searchTerm.trim() !== '' && (
-        <div className="relative py-5">
-          <div className="container relative m-auto px-6 text-gray-500 md:px-12">
-            <div className="grid gap-6 md:mx-auto md:w-8/12 lg:w-full lg:grid-cols-3 animate-fade">
+        <div className=" py-5 max-w-screen-xl mx-auto animate-fade">
+          <div className="container  m-auto px-6 text-gray-500 md:px-12">
+            <div className="grid gap-6 md:mx-auto md:w-8/12 lg:w-full lg:grid-cols-3">
               {searchResults.map((product) => (
                 <Link
                   key={product.id}

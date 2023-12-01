@@ -8,7 +8,7 @@ function Register() {
         username: "",
         password: "",
         isAdmin: "",
-        file: null,
+        // file: null,
     });
 
     const navigate = useNavigate();
@@ -21,12 +21,12 @@ function Register() {
         event.preventDefault();
 
         const formData = new FormData();
-        formData.append("file", registerForm.file);
+        // formData.append("file", registerForm.file);
         formData.append("username", registerForm.username);
         formData.append("password", registerForm.password);
         formData.append("isAdmin", registerForm.isAdmin);
 
-        axios.post("http://127.0.0.1:5000/signup", formData, {
+        axios.post("http://catalogo.granadalapalma.com:5000/signup", formData, {
             headers: {
                 "Content-Type": "multipart/form-data",
             },
@@ -51,7 +51,7 @@ function Register() {
             username: "",
             password: "",
             isAdmin: "",
-            file: null,
+            // file: null,
         });
     }
 
@@ -60,7 +60,7 @@ function Register() {
       
         setRegisterForm((prevForm) => ({
           ...prevForm,
-          [name]: type === "file" ? event.target.files[0] : (name === 'isAdmin' ? value : (name === 'username' ? value.toUpperCase() : value.trim())),
+          [name]: (name === 'isAdmin' ? value : (name === 'username' ? value.toUpperCase() : value.trim())),
         }));
       }
       
@@ -130,7 +130,7 @@ function Register() {
                             <option value="admin">Admin</option>
                         </select>
                     </div>
-                    <div>
+                    {/* <div>
                         <label htmlFor="file" className="block text-sm font-medium leading-6 text-gray-900">
                             Avatar Usuario
                         </label>
@@ -143,7 +143,7 @@ function Register() {
                                 accept="image/*"
                                 className="file-input file-input-bordered file-input-success w-full"                             />
                         </div>
-                    </div>
+                    </div> */}
 
                     <div>
                         <button
