@@ -34,7 +34,7 @@ function Admin() {
 
     return (
 
-        <div className='animate-fade-down'>
+        <div className='animate-fade-down mt-20'>
             <ul className="menu menu-horizontal flex justify-center rounded-box mb-5">
                 <li>
                     <a onClick={toggleFormularioCategorias}>

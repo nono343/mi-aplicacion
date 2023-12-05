@@ -136,135 +136,145 @@ function AdminCategorias(props) {
     };
 
     return (
-        <div className='animate-flip-down max-w-screen-xl mx-auto px-10'>
-            <div className='animate-flip-down max-w-screen-xl mx-auto px-10 gap-6'>
-                <form className="grid md:grid-cols-3 gap-6 mb-5">
-                    <div className="form-control w-full max-w-xs">
-                        <input type="text" id="name_esp" className="input input-bordered w-full max-w-xs" placeholder="Nombre Categoría Español" onChange={handleNombreEspChangeCategory} required />
-                    </div>
+        <div className='animate-flip-down mx-auto px-10'>
+            <form className="grid mx-auto md:grid-cols-3 gap-6 mb-5">
+                <div className="form-control w-full">
+                    <label className="label">
+                        <span className="label-text">Nombre Categoría Español</span>
+                    </label>
 
-                    <div className="form-control w-full max-w-xs">
-                        <input type="text" id="name_eng" className="input input-bordered w-full max-w-xs" placeholder="Nombre Categoría Inglés" onChange={handleNombreEngChangeCategory} required />
-                    </div>
-
-                    <div className="form-control w-full max-w-xs">
-                        <input type="file" className="file-input file-input-bordered w-full max-w-xs" onChange={handleFileChangeCategory} required />
-                    </div>
-
-                    <div className='mx-auto md:col-start-2 mt-5 '>
-                        <button onClick={handleUploadCategory} type="button" className="btn btn-outline btn-success">Crear Categoría</button>
-                    </div>
-                </form>
-
-                <div className="overflow-x-auto mt-5">
-                    <table className="table overflow-x-auto">
-                        <thead>
-                            <tr>
-                                <th className="sm:w-1/4">Foto</th>
-                                <th className="sm:w-1/4">Nombre</th>
-                                <th className="sm:w-1/4">Nombre Inglés</th>
-                                <th className="sm:w-1/4">Editar</th>
-                                <th className="sm:w-1/4">Eliminar</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {categories.map((category) => (
-                                <tr key={category.id}>
-                                    <td className="sm:w-1/4">
-                                        {category.foto && (
-                                            <div className="flex items-center gap-3">
-                                                <div className="avatar">
-                                                    <div className="mask mask-squircle w-12 h-12">
-                                                        <img
-                                                            src={`http://localhost:5000/uploads/${category.nombreesp}/${category.foto}`}
-                                                            alt={category.nombreesp}
-                                                            className="max-w-full h-auto"
-                                                        />
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        )}
-                                    </td>
-                                    <td className="sm:w-1/4">{category.nombreesp}</td>
-                                    <td className="sm:w-1/4">{category.nombreeng}</td>
-                                    <td className="sm:w-1/4">
-                                        <button
-                                            onClick={() => handleEditCategory(category)}
-                                            className="btn btn-outline btn-info"
-                                        >
-                                            Editar
-                                        </button>
-                                    </td>
-                                    <td className="sm:w-1/4">
-                                        <button
-                                            onClick={() => handleDeleteCategory(category.id)}
-                                            className="btn btn-outline btn-error"
-                                        >
-                                            Eliminar
-                                        </button>
-                                    </td>
-                                </tr>
-                            ))}
-                        </tbody>
-                    </table>
+                    <input type="text" id="name_esp" className="input input-bordered w-full" placeholder="Nombre Categoría Español" onChange={handleNombreEspChangeCategory} required />
                 </div>
 
-                {editingCategory && (
-                    <div className="mt-5">
-                        <h2>Editar Categoría</h2>
-                        <form className="grid md:grid-cols-3 gap-6">
-                            <div className="form-control w-full max-w-xs">
-                                <input
-                                    type="text"
-                                    id="edit_name_esp"
-                                    className="input input-bordered w-full max-w-xs"
-                                    placeholder="Nombre Categoría Español"
-                                    onChange={handleNombreEspChangeCategory}
-                                    value={nombreEspCategory}
-                                    required
-                                />
-                            </div>
+                <div className="form-control w-full">
+                    <label className="label">
+                        <span className="label-text">Nombre Categoría Inglés</span>
+                    </label>
 
-                            <div className="form-control w-full max-w-xs">
-                                <input
-                                    type="text"
-                                    id="edit_name_eng"
-                                    className="input input-bordered w-full max-w-xs"
-                                    placeholder="Nombre Categoría Inglés"
-                                    onChange={handleNombreEngChangeCategory}
-                                    value={nombreEngCategory}
-                                    required
-                                />
-                            </div>
+                    <input type="text" id="name_eng" className="input input-bordered w-full" placeholder="Nombre Categoría Inglés" onChange={handleNombreEngChangeCategory} required />
+                </div>
 
-                            <div className="form-control w-full max-w-xs">
-                                <input
-                                    type="file"
-                                    className="file-input file-input-bordered w-full max-w-xs"
-                                    onChange={handleFileChangeCategory}
-                                />
-                            </div>
+                <div className="form-control w-full">
+                    <label className="label">
+                        <span className="label-text">Foto Categoría</span>
+                    </label>
 
-                            <div className="mx-auto md:col-start-2 mt-5">
-                                <button
-                                    onClick={handleUpdateCategory}
-                                    type="button"
-                                    className="btn btn-outline btn-success"
-                                >
-                                    Actualizar Categoría
-                                </button>
-                                <button
-                                    onClick={handleCancelEdit}
-                                    type="button"
-                                    className="btn btn-outline btn-danger ml-2"
-                                >
-                                    Cancelar
-                                </button>
-                            </div>
-                        </form>
-                    </div>
-                )}
+                    <input type="file" className="file-input file-input-bordered file-input-success w-full" onChange={handleFileChangeCategory} required />
+                </div>
+
+                <div className='mx-auto md:col-start-2'>
+                    <button onClick={handleUploadCategory} type="button" className="btn btn-outline btn-success">Crear Categoría</button>
+                </div>
+            </form>
+
+            <div className="overflow-x-auto mt-5">
+                <table className="table overflow-x-auto">
+                    <thead>
+                        <tr>
+                            <th className="sm:w-1/4">Foto</th>
+                            <th className="sm:w-1/4">Nombre</th>
+                            <th className="sm:w-1/4">Nombre Inglés</th>
+                            <th className="sm:w-1/4">Editar</th>
+                            <th className="sm:w-1/4">Eliminar</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {categories.map((category) => (
+                            <tr key={category.id}>
+                                <td className="sm:w-1/4">
+                                    {category.foto && (
+                                        <div className="flex items-center gap-3">
+                                            <div className="avatar">
+                                                <div className="mask mask-squircle w-12 h-12">
+                                                    <img
+                                                        src={`http://catalogo.granadalapalma.com:5000/uploads/${category.nombreesp}/${category.foto}`}
+                                                        alt={category.nombreesp}
+                                                        className="max-w-full h-auto"
+                                                    />
+                                                </div>
+                                            </div>
+                                        </div>
+                                    )}
+                                </td>
+                                <td className="sm:w-1/4">{category.nombreesp}</td>
+                                <td className="sm:w-1/4">{category.nombreeng}</td>
+                                <td className="sm:w-1/4">
+                                    <button
+                                        onClick={() => handleEditCategory(category)}
+                                        className="btn btn-outline btn-warning"
+                                    >
+                                        Editar
+                                    </button>
+                                </td>
+                                <td className="sm:w-1/4">
+                                    <button
+                                        onClick={() => handleDeleteCategory(category.id)}
+                                        className="btn btn-outline btn-error"
+                                    >
+                                        Eliminar
+                                    </button>
+                                </td>
+                            </tr>
+                        ))}
+                    </tbody>
+                </table>
             </div>
+
+            {editingCategory && (
+                <div className="mt-5">
+                    <h2>Editar Categoría</h2>
+                    <form className="grid md:grid-cols-3 gap-6">
+                        <div className="form-control w-full">
+                            <input
+                                type="text"
+                                id="edit_name_esp"
+                                className="input input-bordered w-full"
+                                placeholder="Nombre Categoría Español"
+                                onChange={handleNombreEspChangeCategory}
+                                value={nombreEspCategory}
+                                required
+                            />
+                        </div>
+
+                        <div className="form-control w-full">
+                            <input
+                                type="text"
+                                id="edit_name_eng"
+                                className="input input-bordered w-full"
+                                placeholder="Nombre Categoría Inglés"
+                                onChange={handleNombreEngChangeCategory}
+                                value={nombreEngCategory}
+                                required
+                            />
+                        </div>
+
+                        <div className="form-control w-full">
+                            <input
+                                type="file"
+                                className="file-input file-input-bordered w-full"
+                                onChange={handleFileChangeCategory}
+                            />
+                        </div>
+
+                        <div className="mx-auto md:col-start-2 mt-5">
+                            <button
+                                onClick={handleUpdateCategory}
+                                type="button"
+                                className="btn btn-outline btn-success"
+                            >
+                                Actualizar Categoría
+                            </button>
+                            <button
+                                onClick={handleCancelEdit}
+                                type="button"
+                                className="btn btn-outline btn-danger ml-2"
+                            >
+                                Cancelar
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            )}
         </div>
     );
 }

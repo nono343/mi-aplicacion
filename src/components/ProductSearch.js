@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
-import axios from 'axios'; // Importa la biblioteca Axios
+import axios from 'axios'; 
+import unorm from "unorm"; 
 
 const ProductSearch = ({ isSpanish, setIsSearching }) => {
   const [searchTerm, setSearchTerm] = useState('');
@@ -11,7 +12,7 @@ const ProductSearch = ({ isSpanish, setIsSearching }) => {
     setSearchTerm(term);
 
     try {
-      const response = await axios.get(`http://localhost:5000/productos?nombre=${term}`);
+      const response = await axios.get(`http://catalogo.granadalapalma.com:5000/productos?nombre=${term}`);
       const data = response.data;
       setSearchResults(data.products);
       setIsSearching(!!term.trim());
@@ -20,9 +21,19 @@ const ProductSearch = ({ isSpanish, setIsSearching }) => {
     }
   };
 
+  console.log(searchResults)
+
+  const removeAccents = (str) => {
+    return unorm.nfd(str).replace(/[\u0300-\u036f]/g, "");
+};
+
+const removeAsterisks = (str) => {
+    return str.replace(/\*/g, '');
+};
+
 
   return (
-    <div className='py-5 px-10'>
+    <div className='py-5 px-10 mt-20'>
       <div className="form-control w-full max-w-sm mx-auto">
         <input
           type="text"
@@ -33,8 +44,8 @@ const ProductSearch = ({ isSpanish, setIsSearching }) => {
         />
       </div>
       {searchResults.length > 0 && searchTerm.trim() !== '' && (
-        <div className=" py-5 max-w-screen-xl mx-auto animate-fade">
-          <div className="container  m-auto px-6 text-gray-500 md:px-12">
+        <div className=" py-5  mx-auto animate-fade">
+          <div className="container m-auto px-6 text-gray-500 md:px-12">
             <div className="grid gap-6 md:mx-auto md:w-8/12 lg:w-full lg:grid-cols-3">
               {searchResults.map((product) => (
                 <Link
@@ -45,7 +56,7 @@ const ProductSearch = ({ isSpanish, setIsSearching }) => {
                 >
                   <img
                     className="mx-auto w-120"
-                    src={product.foto_url}
+                    src={`http://catalogo.granadalapalma.com:5000/uploads/${removeAccents(product.categoria_nombreesp)}/${removeAccents(product.nombreesp)}/${product.foto}`}
                     alt={isSpanish ? product.nombreesp : product.nombreeng}
                     loading="lazy"
                   />

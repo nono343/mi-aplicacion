@@ -43,8 +43,8 @@ def create_token():
     print("User ID:", user.id)
     print("Username:", user.username)
 
-    # Modifica la creación del token para incluir la ruta completa de la foto
-    # foto_path = f"http://localhost:5000/uploads/{user.foto}" if user.foto else None
+    # Modifica la creación del token para incluir el nombre del archivo de la foto
+    foto_filename = user.foto if user.foto else None
 
     # Crea el token con información adicional en la carga útil
     access_token = create_access_token(
@@ -52,7 +52,7 @@ def create_token():
         additional_claims={
             "username": user.username,
             "isAdmin": user.isAdmin,
-            # "foto": foto_path  # Cambia aquí para incluir la ruta completa
+            "foto": foto_filename  # Cambia aquí para incluir el nombre del archivo
         }
     )
 
@@ -65,24 +65,20 @@ def create_token():
         "username": user.username,
         "access_token": access_token,
         "isAdmin": user.isAdmin,
-        # "foto": foto_path
+        "foto": foto_filename
     })
 
 @api.route("/signup", methods=["POST"])
 def signup():
-    # if 'file' not in request.files:
-    #     return jsonify({'error': 'No file part'}), 400
+    if 'file' not in request.files:
+        return jsonify({'error': 'No file part'}), 400
 
-    # file = request.files['file']
-    # if file.filename == '':
-    #     return jsonify({'error': 'No selected file'}), 400
+    file = request.files['file']
+    if file.filename == '':
+        return jsonify({'error': 'No selected file'}), 400
 
     username = request.form.get("username", None)
     password = request.form.get("password", None)
-
-    # if file and allowed_file(file.filename):
-    #     filename = secure_filename(file.filename)
-    #     file.save(os.path.join(os.path.abspath(api.config['UPLOAD_FOLDER']), filename))
 
     if not username or not password:
         return jsonify({"error": "Username and password are required"}), 400
@@ -92,7 +88,17 @@ def signup():
         return jsonify({"error": "Username already exists"}), 409
 
     hashed_password = bcrypt.generate_password_hash(password).decode("utf-8")
-    new_user = User(username=username, password=hashed_password, isAdmin=request.form.get("isAdmin", "user"))
+
+    if file and allowed_file(file.filename):
+        filename = secure_filename(file.filename)
+        
+        # Crear un directorio basado en el nombre de usuario si no existe dentro de /users
+        user_folder = os.path.join(api.config['UPLOAD_FOLDER'], 'users', username)
+        os.makedirs(user_folder, exist_ok=True)
+        
+        file.save(os.path.join(user_folder, filename))
+
+    new_user = User(username=username, password=hashed_password, isAdmin=request.form.get("isAdmin", "user"), foto=filename)
     db.session.add(new_user)
     db.session.commit()
 
@@ -100,7 +106,7 @@ def signup():
         "id": new_user.id,
         "username": new_user.username,
         "isAdmin": new_user.isAdmin,
-        # "foto": new_user.foto
+        "foto": new_user.foto,
     })
  
  # Ruta para obtener la información de los usuarios
@@ -329,11 +335,13 @@ def upload_product():
         nombreeng = request.form.get('nombreeng', '')
         descripcionesp = request.form.get('descripcionesp', '')
         descripcioneng = request.form.get('descripcioneng', '')
+        variedadesp = request.form.get('variedadesp', '')
+        variedadeng = request.form.get('variedadeng', '')
         categoria_id = request.form.get('categoria', '')
         mesesproduccion = request.form.getlist('mes_produccion')
 
         # Validar que los campos requeridos no estén vacíos
-        if not all([nombreesp, nombreeng, descripcionesp, descripcioneng, categoria_id, mesesproduccion]):
+        if not all([nombreesp, nombreeng, descripcionesp, descripcioneng, variedadesp, variedadeng, categoria_id, mesesproduccion]):
             return jsonify({'error': 'All fields are required'}), 400
 
         # Obtener el nombre de la categoría
@@ -363,6 +371,8 @@ def upload_product():
                 nombreeng=nombreeng,
                 descripcionesp=descripcionesp,
                 descripcioneng=descripcioneng,
+                variedadesp=variedadesp,
+                variedadeng=variedadeng,
                 categoria_id=categoria_id,
                 foto=filename,
                 foto2=filename2,
@@ -492,6 +502,8 @@ def get_products():
                     'peso_neto_pallet_100x120_kg': packaging.peso_neto_pallet_100x120_kg,
                     'pallet_avion': packaging.pallet_avion,
                     'peso_neto_pallet_avion': packaging.peso_neto_pallet_avion,
+                    'foto': packaging.foto,
+                    'foto2': packaging.foto2,
                     'foto_url': f"http://localhost:5000/uploads/{product.categoria_nombreesp_rel.nombreesp}/{product.nombreesp}/{unidecode(packaging.nombreesp.replace(' ', '_'))}/{packaging.tamano_caja.replace('*', '')}/{packaging.calibre}/{packaging.foto}",
                     'foto2_url': f"http://localhost:5000/uploads/{product.categoria_nombreesp_rel.nombreesp}/{product.nombreesp}/{unidecode(packaging.nombreesp.replace(' ', '_'))}/{packaging.tamano_caja.replace('*', '')}/{packaging.calibre}/{packaging.foto2}" if packaging.foto2 else None,
                     'producto_id': packaging.producto_id,
@@ -506,7 +518,11 @@ def get_products():
                 'nombreeng': product.nombreeng,
                 'descripcionesp': product.descripcionesp,
                 'descripcioneng': product.descripcioneng,
+                'variedadesp': product.variedadesp,
+                'variedadeng': product.variedadeng,
                 'categoria_id': product.categoria_id,
+                'foto': product.foto,
+                'foto2': product.foto2,
                 'categoria_nombreesp': product.categoria_nombreesp_rel.nombreesp if product.categoria_nombreesp_rel else None,
                 'foto_url': f"http://localhost:5000/uploads/{product.categoria_nombreesp_rel.nombreesp}/{product.nombreesp}/{product.foto}",
                 'foto2_url': f"http://localhost:5000/uploads/{product.categoria_nombreesp_rel.nombreesp}/{product.nombreesp}/{product.foto2}" if product.foto2 else None,
@@ -683,9 +699,11 @@ def get_packagings():
                 'peso_neto_pallet_100x120_kg': packaging.peso_neto_pallet_100x120_kg,
                 'pallet_avion': packaging.pallet_avion,
                 'peso_neto_pallet_avion': packaging.peso_neto_pallet_avion,
-                'foto': foto_url,
-                'foto2': foto2_url,
+                'foto': packaging.foto,
+                'foto2': packaging.foto2,
                 'producto_id': packaging.producto_id,
+                'producto': packaging.producto_nombreesp,
+                'categoria': packaging.categoria_nombreesp,
                 'nombreproducto': packaging.producto.nombre,  # Nuevo campo para el nombre del producto en español
                 'users': users,
             }
@@ -773,7 +791,13 @@ def search_products_in_category(categoria_id):
                 'id': producto.id,
                 'nombreesp': producto.nombreesp,
                 'nombreeng': producto.nombreeng,
-                'foto': foto_url,  # URL completa de la foto
+                'variedadesp': producto.variedadesp,
+                'variedadeng': producto.variedadeng,
+                'foto': producto.foto,  # URL completa de la foto
+                'categoria_id': producto.categoria_id,
+                'categoria_nombreesp': producto.categoria_nombreesp_rel.nombreesp if producto.categoria_nombreesp_rel else None,
+
+                # 'foto': foto_url,  # URL completa de la foto
                 # Puedes agregar más campos según tus necesidades
             }
             productos_info.append(producto_info)
@@ -818,6 +842,8 @@ def get_product_info_by_category(categoria_id, producto_id):
                 'peso_neto_pallet_100x120_kg': packaging.peso_neto_pallet_100x120_kg,
                 'pallet_avion': packaging.pallet_avion,
                 'peso_neto_pallet_avion': packaging.peso_neto_pallet_avion,
+                'foto': packaging.foto,
+                'foto2': packaging.foto2,
                 'foto_url': f"http://localhost:5000/uploads/{producto.categoria_nombreesp_rel.nombreesp}/{producto.nombreesp}/{unidecode(packaging.nombreesp.replace(' ', '_'))}/{packaging.tamano_caja.replace('*', '')}/{packaging.calibre}/{packaging.foto}",
                 'foto2_url': f"http://localhost:5000/uploads/{producto.categoria_nombreesp_rel.nombreesp}/{producto.nombreesp}/{unidecode(packaging.nombreesp.replace(' ', '_'))}/{packaging.tamano_caja.replace('*', '')}/{packaging.calibre}/{packaging.foto2}" if packaging.foto2 else None,
                 'producto_id': packaging.producto_id,
@@ -832,8 +858,12 @@ def get_product_info_by_category(categoria_id, producto_id):
             'nombreeng': producto.nombreeng,
             'descripcionesp': producto.descripcionesp,
             'descripcioneng': producto.descripcioneng,
+            'variedadesp': producto.variedadesp,
+            'variedadeng': producto.variedadeng,
             'categoria_id': producto.categoria_id,
             'categoria_nombreesp': producto.categoria_nombreesp_rel.nombreesp if producto.categoria_nombreesp_rel else None,
+            'foto': producto.foto,
+            'foto2': producto.foto2,
             'foto_url': f"http://localhost:5000/uploads/{producto.categoria_nombreesp_rel.nombreesp}/{producto.nombreesp}/{producto.foto}",
             'foto2_url': f"http://localhost:5000/uploads/{producto.categoria_nombreesp_rel.nombreesp}/{producto.nombreesp}/{producto.foto2}" if producto.foto2 else None,
             'packagings': packaging_list,

@@ -20,7 +20,7 @@ class User(db.Model):
     username = db.Column(db.String(150), unique=True)
     password = db.Column(db.Text, nullable=False)
     isAdmin = db.Column(db.String(10), nullable=False)
-    # foto = db.Column(db.String(120), nullable=True)  # Agrega la columna para la foto
+    foto = db.Column(db.String(120), nullable=True)  # Agrega la columna para la foto
 
     
     # Relación many-to-many con Packagings
@@ -31,7 +31,7 @@ class User(db.Model):
             'id': self.id,
             'username': self.username,
             'isAdmin': self.isAdmin,
-            # 'foto': self.foto,
+            'foto': self.foto,
         }
 
 class Categorias(db.Model):
@@ -69,18 +69,22 @@ class Productos(db.Model):
     nombreeng = db.Column(db.String(80), nullable=False)
     descripcionesp = db.Column(db.Text, nullable=False)
     descripcioneng = db.Column(db.Text, nullable=False)
+    variedadesp = db.Column(db.String(80), nullable=False)
+    variedadeng = db.Column(db.String(80), nullable=False)
     categoria_id = db.Column(db.Integer, db.ForeignKey('categorias.id'), nullable=False)
     foto = db.Column(db.String(120), nullable=False)
     foto2 = db.Column(db.String(120), nullable=True)
-    meses_produccion = db.Column(db.String(50))  # Cambia el tipo según tus necesidades
+    meses_produccion = db.Column(db.String(50))  
     categoria_nombreesp_rel = db.relationship('Categorias', backref=db.backref('productos_rel', lazy=True))
     packagings = db.relationship('Packagings', backref='producto', cascade='all, delete-orphan')
 
-    def __init__(self, nombreesp, nombreeng, descripcionesp, descripcioneng, categoria_id, foto, foto2, meses_produccion):
+    def __init__(self, nombreesp, nombreeng, descripcionesp, descripcioneng, variedadesp, variedadeng, categoria_id, foto, foto2, meses_produccion):
         self.nombreesp = nombreesp
         self.nombreeng = nombreeng
         self.descripcionesp = descripcionesp
         self.descripcioneng = descripcioneng
+        self.variedadesp = variedadesp
+        self.variedadeng = variedadeng
         self.categoria_id = categoria_id
         self.foto = foto
         self.foto2 = foto2
@@ -93,6 +97,8 @@ class Productos(db.Model):
             'nombreeng': self.nombreeng,
             'descripcionesp': self.descripcionesp,
             'descripcioneng': self.descripcioneng,
+            'variedadesp': self.variedadesp,
+            'variedadeng': self.variedadeng,
             'categoria_id': self.categoria_id,
             'categoria_nombreesp': self.categoria.nombreesp,
             'foto': self.foto,

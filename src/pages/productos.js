@@ -3,6 +3,7 @@ import axios from 'axios';
 import { useParams } from 'react-router-dom';
 import { jwtDecode as jwt_decode } from 'jwt-decode';
 import logo from '../assets/LaPalma.png';
+import unorm from "unorm"; // Importa unorm
 
 const DetalleProducto = (props) => {
     const { categoria_id, producto_id } = useParams();
@@ -16,39 +17,45 @@ const DetalleProducto = (props) => {
         nombreproducto: ''
     });
 
+    console.log(producto)
     const token = props.token;
     const decodedToken = token ? jwt_decode(token) : null;
     const userId = decodedToken && decodedToken.sub;
 
     const [isModalOpen, setIsModalOpen] = useState(false);
+    const [modalImageUrl, setModalImageUrl] = useState('');
 
-    const openModal = () => {
-        setIsModalOpen(true);
+    const openImageModal = (event) => {
+        if (event.target && event.target.src) {
+            const imageUrl = event.target.src;
+            setModalImageUrl(imageUrl);
+            const modal = document.getElementById('image_modal');
+            if (modal && modal.showModal) {
+                modal.showModal();
+            }
+        } else {
+            console.error("No se pudo obtener la URL de la imagen");
+        }
     };
 
-    const closeModal = () => {
-        setIsModalOpen(false);
-    };
-
-    const openImageModal = (imageUrl) => {
-        document.getElementById('image_modal').showModal();
-        document.getElementById('modal_image').src = imageUrl;
+    const closeImageModal = () => {
+        setModalImageUrl(null);
+        const modal = document.getElementById('image_modal');
+        if (modal && modal.close) {
+            modal.close();
+        }
     };
 
     useEffect(() => {
         const fetchProductoPorId = async () => {
             try {
-                const response = await axios.get(`http://localhost:5000/categorias/${categoria_id}/productos/${producto_id}`);
+                const response = await axios.get(`http://catalogo.granadalapalma.com:5000/categorias/${categoria_id}/productos/${producto_id}`);
                 const data = response.data;
 
                 // Accede a los datos del producto, packagings y usuarios
                 const productoData = data.producto;
                 const packagingsData = data.producto.packagings;
                 const usersData = data.producto.packagings.map(packaging => packaging.users).flat(); // Asume que cada packaging tiene un campo 'users'
-
-                // Verifica las rutas de las imágenes
-                console.log('foto_url:', productoData.foto_url);
-                console.log('foto2_url:', productoData.foto2_url);
 
                 // Actualiza el estado con los datos
                 setProducto(productoData);
@@ -91,53 +98,87 @@ const DetalleProducto = (props) => {
     }) : [];
 
 
+    const removeAccents = (str) => {
+        return unorm.nfd(str).replace(/[\u0300-\u036f]/g, "");
+    };
+
+    const removeAsterisks = (str) => {
+        return str.replace(/\*/g, '');
+    };
+
+
 
     return (
         <div className='max-w-screen-2xl mx-auto'>
             {/* Sección de información del producto */}
             <section className="text-gray-600 body-font">
-                <div className="container mx-auto flex px-5 md:flex-row flex-col items-center">
-                    <div className="lg:max-w-lg lg:w-full md:w-1/2 w-5/6 mb-10 md:mb-0 animate-fade-right">
-                        <div className="carousel w-full">
-                            <div id="item1" className="carousel-item w-full">
-                                <img
-                                    src={producto.foto_url}
-                                    alt={producto.nombreesp || ''}
-                                    className="h-full w-full object-cover"
-                                />
-                            </div>
-                            <div id="item2" className="carousel-item w-full">
-                                <img
-                                    src={producto.foto2_url}
-                                    alt={producto.nombreesp || ''}
-                                    className="h-full w-full object-cover"
-                                />
-                            </div>
-                        </div>
-                        <div className="flex justify-center w-full py-2 gap-2">
-                            {producto.foto_url && (
-                                <a href="#item1" className="btn btn-xs">1</a>
-                            )}
-                            {producto.foto2_url && (
-                                <a href="#item2" className="btn btn-xs">2</a>
-                            )}
-                        </div>
-                    </div>
-                    <div className="lg:flex-grow md:w-1/2 lg:pl-24 md:pl-16 flex flex-col md:items-start md:text-left items-center text-center animate-fade-left">
+                <div className="container mx-auto flex flex-col md:flex-row items-center">
+                    <div className="lg:flex-grow md:w-1/2 lg:pl-24 md:pl-16 md:items-start md:text-left items-center text-center animate-fade-right">
                         <h1 className="title-font sm:text-4xl text-3xl mb-4 font-medium text-gray-900">
-                            {props.isSpanish ? producto.nombreesp : producto.nombreeng}
+                            {(() => {
+                                if (producto.categoria_nombreesp === "Tomates") {
+                                    return `Tomate ${props.isSpanish ? producto.nombreesp : producto.nombreeng}`;
+                                } else {
+                                    return props.isSpanish ? producto.nombreesp : producto.nombreeng;
+                                }
+                            })()}
                         </h1>
+                        <h2 className="title-font text-xl  mb-4 font-medium text-gray-900">
+                            {props.isSpanish ? producto.tipo : producto.nombreeng}
+                        </h2>
+
                         {(props.isSpanish ? producto.descripcionesp : producto.descripcioneng).split(/\n/).map((paragraph, index) => (
                             <p key={index} className="mb-2 leading-relaxed">
                                 {paragraph}
                             </p>
                         ))}
                     </div>
-                </div>
-            </section>
+                    <div className=" md:w-1/2 w-5/6 animate-fade-left">
+                        <div className="diff aspect-[9/9]">
+                            <div className="diff-item-1">
+                                <img
+                                    alt={producto.nombreesp || ''}
+                                    src={`http://catalogo.granadalapalma.com:5000/uploads/${removeAccents(producto.categoria_nombreesp)}/${removeAccents(producto.nombreesp)}/${producto.foto}`}
+                                />
+                            </div>
+                            <div className="diff-item-2">
+                                <img
+                                    alt={producto.nombreesp || ''}
+                                    src={`http://catalogo.granadalapalma.com:5000/uploads/${removeAccents(producto.categoria_nombreesp)}/${removeAccents(producto.nombreesp)}/${producto.foto2}`}
+                                />
+                            </div>
+                            <div className="diff-resizer"></div>
+                        </div>
+                        {/* <div className="carousel w-full">
+                            <div id="item1" className="carousel-item w-full">
+                                <img
+                                    src={`http://catalogo.granadalapalma.com:5000/uploads/${removeAccents(producto.categoria_nombreesp)}/${removeAccents(producto.nombreesp)}/${producto.foto}`}
+                                    alt={producto.nombreesp || ''}
+                                    className="h-full w-full object-cover"
+                                />
+                            </div>
+                            <div id="item2" className="carousel-item w-full">
+                                <img
+                                    src={`http://catalogo.granadalapalma.com:5000/uploads/${removeAccents(producto.categoria_nombreesp)}/${removeAccents(producto.nombreesp)}/${producto.foto2}`}
+                                    alt={producto.nombreesp || ''}
+                                    className="h-full w-full object-cover"
+                                />
+                            </div>
+                        </div> */}
+                        {/* <div className="flex justify-center w-full py-2 gap-2">
+                            {producto.foto_url && (
+                                <a href="#item1" className="btn btn-xs">1</a>
+                            )}
+                            {producto.foto2_url && (
+                                <a href="#item2" className="btn btn-xs">2</a>
+                            )}
+                        </div> */}
+                    </div>
+                </div >
+            </section >
 
             {/* Calendario de producción */}
-            <section>
+            < section >
                 <div className="border-t mx-auto border-gray-200 bg-white px-10 py-10 sm:px-6 animate-fade-up">
                     <h1 className="sm:text-3xl text-center text-2xl mb-5">
                         {props.isSpanish ? "Calendario de producción" : "Production Calendar"}
@@ -156,7 +197,7 @@ const DetalleProducto = (props) => {
                         ))}
                     </div>
                 </div>
-            </section>
+            </section >
 
             <div className="border-t mx-auto border-gray-200 bg-white py-5 sm:px-6 animate-fade-up"></div>
 
@@ -228,19 +269,19 @@ const DetalleProducto = (props) => {
                                     <tr className="bg-white" key={index}>
                                         <td className="py-2 px-4 border-b">
                                             <img
-                                                src={packaging.foto_url}
+                                                src={`http://catalogo.granadalapalma.com:5000/uploads/${removeAccents(producto.categoria_nombreesp)}/${removeAccents(producto.nombreesp)}/${removeAccents(removeAsterisks(packaging.nombreesp.replace(/ /g, '_')))}/${removeAsterisks(packaging.tamano_caja)}/${packaging.calibre}/${packaging.foto}`}
                                                 alt="Packaging"
                                                 className="w-12 h-12 sm:w-16 sm:h-16 object-cover rounded-full cursor-pointer"
-                                                onClick={() => openImageModal(packaging.foto_url)}
+                                                onClick={(event) => openImageModal(event)}
                                             />
                                         </td>
                                         <td className="py-2 px-4 border-b">
-                                            {packaging.foto2_url ? (
+                                            {packaging.foto2 ? (
                                                 <img
-                                                    src={packaging.foto2_url}
+                                                    src={`http://catalogo.granadalapalma.com:5000/uploads/${removeAccents(producto.categoria_nombreesp)}/${removeAccents(producto.nombreesp)}/${removeAccents(removeAsterisks(packaging.nombreesp.replace(/ /g, '_')))}/${removeAsterisks(packaging.tamano_caja)}/${packaging.calibre}/${packaging.foto2}`}
                                                     alt="Packaging"
                                                     className="w-12 h-12 sm:w-16 sm:h-16 object-cover rounded-full cursor-pointer"
-                                                    onClick={() => openImageModal(packaging.foto2_url)}
+                                                    onClick={(event) => openImageModal(event)}
                                                 />
                                             ) : (
                                                 <img
@@ -302,15 +343,15 @@ const DetalleProducto = (props) => {
             </section>
 
             {/* Modal */}
-            <dialog id="image_modal" className="modal">
+            <dialog id="image_modal" className={`modal ${isModalOpen ? 'open' : ''}`}>
                 <div className="modal-box">
                     <form method="dialog">
-                        <button className="btn btn-sm btn-circle btn-ghost absolute right-2 top-2" onClick={() => document.getElementById('image_modal').close()}>✕</button>
+                        <button className="btn btn-sm btn-circle btn-ghost absolute right-2 top-2" onClick={closeImageModal}>✕</button>
                     </form>
-                    <img id="modal_image" alt="Modal" className="w-full h-full object-cover" />
+                    <img id="modal_image" alt="Modal" src={modalImageUrl} className="w-full h-full object-cover" />
                 </div>
             </dialog>
-        </div>
+        </div >
     );
 };
 

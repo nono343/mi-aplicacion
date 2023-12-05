@@ -1,8 +1,10 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import logo from "../assets/LaPalma.png"
+import unorm from "unorm"; // Importa unorm
 
-function AdminPackaging(props) {
+
+function AdminPackaging() {
     const [selectedFilePackaging, setSelectedFilePackaging] = useState(null);
     const [selectedFilePackaging2, setSelectedFilePackaging2] = useState(null); // Added for the second file
     const [nombreesp, setNombreEsp] = useState('');
@@ -24,6 +26,7 @@ function AdminPackaging(props) {
     const [availableUsers, setAvailableUsers] = useState([]);
     const [productIds, setProductIds] = useState(""); // Suponiendo que productIds es una cadena
     const [availableProducts, setAvailableProducts] = useState([]);
+
 
     const nombresMappings = {
         'BOLSA SNACK EN FLOWPACK': 'FLOWPACK SNACK BAG',
@@ -113,17 +116,14 @@ function AdminPackaging(props) {
         setCalibre(calibreMapping);
     };
 
-
-
-
     useEffect(() => {
         const fetchData = async () => {
             try {
-                const usersResponse = await axios.get('http://localhost:5000/users');
-                setAvailableUsers(usersResponse.data.users || []);
+                const usersResponse = await axios.get('http://catalogo.granadalapalma.com:5000/users');
+                setAvailableUsers(usersResponse.data.users);
 
-                const productsResponse = await axios.get('http://localhost:5000/productos'); // Cambiado de 'products' a 'productos'
-                setAvailableProducts(productsResponse.data.products || []);
+                const productsResponse = await axios.get('http://catalogo.granadalapalma.com:5000/productos'); // Cambiado de 'products' a 'productos'
+                setAvailableProducts(productsResponse.data.products);
             } catch (error) {
                 console.error('Error al obtener la lista de usuarios o productos:', error.response.data.error);
             }
@@ -142,7 +142,6 @@ function AdminPackaging(props) {
     const handleFileChange2 = (event) => {
         setSelectedFilePackaging2(event.target.files[0]);
     };
-
 
     const handleSubmit = async (event) => {
         event.preventDefault();
@@ -170,7 +169,7 @@ function AdminPackaging(props) {
             userIds.forEach((userId) => {
                 formData.append('user_ids', userId);
             });
-            const response = await axios.post('http://localhost:5000/upload_packaging', formData, {
+            const response = await axios.post('http://catalogo.granadalapalma.com:5000/upload_packaging', formData, {
                 headers: {
                     'Content-Type': 'multipart/form-data',
                 },
@@ -212,11 +211,14 @@ function AdminPackaging(props) {
     const [updatedPackaging, setUpdatedPackaging] = useState(null);
     const [actualizacionProductos, setActualizacionProductos] = useState(false);
 
+
     useEffect(() => {
         const fetchData = async () => {
             try {
-                const response = await axios.get('http://localhost:5000/productos');
+                const response = await axios.get('http://catalogo.granadalapalma.com:5000/productos');
                 const data = response.data.products;
+                console.log(response.data)
+
                 setPackagingData(data);
             } catch (error) {
                 console.error('Error fetching data:', error);
@@ -231,7 +233,7 @@ function AdminPackaging(props) {
     useEffect(() => {
         if (actualizacionProductos) {
             // Fetch the updated list of products right after successful upload
-            axios.get('http://localhost:5000/productos')
+            axios.get('http://catalogo.granadalapalma.com:5000/productos')
                 .then((response) => {
                     setPackagingData(response.data.products);
                 })
@@ -247,7 +249,7 @@ function AdminPackaging(props) {
 
     const handleDeletePackaging = async (packagingId) => {
         try {
-            const response = await axios.delete(`http://localhost:5000/packagings/${packagingId}`);
+            const response = await axios.delete(`http://catalogo.granadalapalma.com:5000/packagings/${packagingId}`);
             if (response.status === 200) {
                 // Recargar los datos después de una eliminación exitosa
                 fetchData();
@@ -296,7 +298,7 @@ function AdminPackaging(props) {
 
     const fetchData = async () => {
         try {
-            const response = await axios.get('http://localhost:5000/packagings');
+            const response = await axios.get('http://catalogo.granadalapalma.com:5000/packagings');
             setPackagings(response.data.packagings);
         } catch (error) {
             console.error('Error fetching data:', error);
@@ -330,7 +332,7 @@ function AdminPackaging(props) {
 
     useEffect(() => {
         // Realizar la solicitud GET para obtener los packagings
-        axios.get('http://localhost:5000/packagings')
+        axios.get('http://catalogo.granadalapalma.com:5000/packagings')
             .then(response => {
                 setPackagings(response.data.packagings);
             })
@@ -339,7 +341,7 @@ function AdminPackaging(props) {
             });
 
         // Realizar la solicitud GET para obtener todos los usuarios
-        axios.get('http://localhost:5000/users')
+        axios.get('http://catalogo.granadalapalma.com:5000/users')
             .then(response => {
                 setAllUsers(response.data.users);
             })
@@ -361,13 +363,13 @@ function AdminPackaging(props) {
     const handleSaveUsers = async () => {
         try {
             // Realizar la solicitud PUT para actualizar los usuarios asociados al packaging
-            await axios.put(`http://localhost:5000/packagings/${editingPackaging.id}/edit_users`, {
+            await axios.put(`http://catalogo.granadalapalma.com:5000/packagings/${editingPackaging.id}/edit_users`, {
                 users: editedUsers.map(user => user.id),
             });
 
 
             // Actualizar la lista de packagings después de la edición
-            axios.get('http://localhost:5000/packagings')
+            axios.get('http://catalogo.granadalapalma.com:5000/packagings')
                 .then(response => {
                     setPackagings(response.data.packagings);
                 });
@@ -395,29 +397,45 @@ function AdminPackaging(props) {
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [modalImageUrl, setModalImageUrl] = useState('');
 
-    const openImageModal = (imageUrl) => {
-        setModalImageUrl(imageUrl);
-        document.getElementById('image_modal').showModal();
-        setIsModalOpen(true);
+    const openImageModal = (event) => {
+        if (event.target && event.target.src) {
+            const imageUrl = event.target.src;
+            setModalImageUrl(imageUrl);
+            const modal = document.getElementById('image_modal');
+            if (modal && modal.showModal) {
+                modal.showModal();
+            }
+        } else {
+            console.error("No se pudo obtener la URL de la imagen");
+        }
     };
 
     const closeImageModal = () => {
-        setModalImageUrl('');
-        document.getElementById('image_modal').close();
-        setIsModalOpen(false);
+        setModalImageUrl(null);
+        const modal = document.getElementById('image_modal');
+        if (modal && modal.close) {
+            modal.close();
+        }
+    };
+
+    const removeAccents = (str) => {
+        return unorm.nfd(str).replace(/[\u0300-\u036f]/g, "");
+    };
+
+    const removeAsterisks = (str) => {
+        return str.replace(/\*/g, '');
     };
 
 
-
     return (
-        <div className='animate-flip-down max-w-screen-xl mx-auto px-10'>
+        <div className='animate-flip-down mx-auto px-10'>
             <form className="grid md:grid-cols-3 gap-6 mb-5">
-                <div className="form-control w-full max-w-xs">
+                <div className="form-control w-full">
                     <label className="label">
                         <span className="label-text">Selecciona un producto</span>
                     </label>
                     <select
-                        className="select select-bordered w-full max-w-xs"
+                        className="select select-bordered w-full"
                         value={productIds}
                         onChange={(e) => {
                             const selectedProductId = e.target.value;
@@ -432,13 +450,13 @@ function AdminPackaging(props) {
                     </select>
                 </div>
 
-                <div className="form-control w-full max-w-xs">
+                <div className="form-control w-full">
                     <label className="label">
                         <span className="label-text">Nombre Packaging</span>
                     </label>
                     <select
                         id="name_packaging_esp"
-                        className="input input-bordered w-full max-w-xs"
+                        className="input input-bordered w-full"
                         value={nombreesp}
                         onChange={handleNombreEspChange}
                         required
@@ -453,14 +471,14 @@ function AdminPackaging(props) {
                         ))}
                     </select>
                 </div>
-                <div className="form-control w-full max-w-xs">
+                <div className="form-control w-full">
                     <label className="label">
                         <span className="label-text">Nombre Packaging Inglés</span>
                     </label>
                     <input
                         type="text"
                         id="name_packaging_eng"
-                        className="input input-bordered w-full max-w-xs"
+                        className="input input-bordered w-full"
                         placeholder="Nombre Packaging Ingles"
                         value={nombreeng}
                         readOnly
@@ -468,13 +486,13 @@ function AdminPackaging(props) {
                         disabled
                     />
                 </div>
-                <div className="form-control w-full max-w-xs">
+                <div className="form-control w-full">
                     <label className="label">
                         <span className="label-text">Marca Caja Packaging</span>
                     </label>
                     <select
                         id="name_marca_esp"
-                        className="input input-bordered w-full max-w-xs"
+                        className="input input-bordered w-full"
                         value={marca}
                         onChange={handleMarcaChange}
                         required
@@ -491,27 +509,27 @@ function AdminPackaging(props) {
                     </select>
                 </div>
 
-                <div className="form-control w-full max-w-xs">
+                <div className="form-control w-full">
                     <label className="label">
                         <span className="label-text">Unidades por Confección</span>
                     </label>
                     <input
                         type="text"
                         id="presentacion"
-                        className="input input-bordered w-full max-w-xs"
+                        className="input input-bordered w-full"
                         placeholder="Unidades"
                         value={presentacion}
                         onChange={(e) => setPresentacion(e.target.value)}
                         required
                     />
                 </div>
-                <div className="form-control w-full max-w-xs">
+                <div className="form-control w-full">
                     <label className="label">
                         <span className="label-text">Calibre</span>
                     </label>
                     <select
                         id="calibre"
-                        className="input input-bordered w-full max-w-xs"
+                        className="input input-bordered w-full"
                         value={calibre}
                         onChange={handleCalibreChange}
                         required
@@ -526,13 +544,13 @@ function AdminPackaging(props) {
                         ))}
                     </select>
                 </div>
-                <div className="form-control w-full max-w-xs">
+                <div className="form-control w-full">
                     <label className="label">
                         <span className="label-text">Medidas de la Caja</span>
                     </label>
                     <select
                         id="tamanocaja"
-                        className="input input-bordered w-full max-w-xs"
+                        className="input input-bordered w-full"
                         value={tamanoCaja}
                         onChange={handleMedidasPackagingChange}
                         required
@@ -548,14 +566,14 @@ function AdminPackaging(props) {
                     </select>
                 </div>
 
-                <div className="form-control w-full max-w-xs">
+                <div className="form-control w-full">
                     <label className="label">
                         <span className="label-text">Peso Neto de la Unidad (g)</span>
                     </label>
                     <input
                         type="text"
                         id="pesopresentacion"
-                        className="input input-bordered w-full max-w-xs"
+                        className="input input-bordered w-full"
                         placeholder="Introduce el Peso Neto Confección (g)"
                         onChange={(e) => setPesoPresentacion(e.target.value)}
                         onBlur={handlePesoNetoCalculo}
@@ -563,84 +581,84 @@ function AdminPackaging(props) {
 
                     />
                 </div>
-                <div className="form-control w-full max-w-xs">
+                <div className="form-control w-full">
                     <label className="label">
                         <span className="label-text">Peso Neto Confección (Kg)</span>
                     </label>
                     <input
                         type="text"
                         id="pesoneto"
-                        className="input input-bordered w-full max-w-xs"
+                        className="input input-bordered w-full"
                         placeholder="Peso Neto Confección (kg)"
                         value={pesoNeto}
                         readOnly
                         disabled
                     />
                 </div>
-                <div className="form-control w-full max-w-xs">
+                <div className="form-control w-full">
                     <label className="label">
                         <span className="label-text">Cajas por Pallet 80x120</span>
                     </label>
                     <input
                         type="text"
                         id="pallet80x120"
-                        className="input input-bordered w-full max-w-xs"
+                        className="input input-bordered w-full"
                         placeholder="Introduce Cajas por Pallet 80x120"
                         onChange={(e) => setPallet80x120(e.target.value)}
                         onBlur={() => handlePesoNetoPalletCalculo(pallet80x120, setPesoNetoPallet80x120)}
                         required
                     />
                 </div>
-                <div className="form-control w-full max-w-xs">
+                <div className="form-control w-full">
                     <label className="label">
                         <span className="label-text">Peso Neto Pallet 80x120 (kg)</span>
                     </label>
                     <input
                         type="text"
                         id="pesoNetoPallet80x120"
-                        className="input input-bordered w-full max-w-xs"
+                        className="input input-bordered w-full"
                         placeholder="Peso Neto Pallet 80x120 (kg)"
                         value={pesoNetoPallet80x120}
                         readOnly
                         disabled
                     />
                 </div>
-                <div className="form-control w-full max-w-xs">
+                <div className="form-control w-full">
                     <label className="label">
                         <span className="label-text">Cajas por Pallet 100x120</span>
                     </label>
                     <input
                         type="text"
                         id="pallet100x120"
-                        className="input input-bordered w-full max-w-xs"
+                        className="input input-bordered w-full"
                         placeholder="Unidades Por Pallet 100x120"
                         onChange={(e) => setPallet100x120(e.target.value)}
                         onBlur={() => handlePesoNetoPalletCalculo(pallet100x120, setPesoNetoPallet100x120)}
                         required
                     />
                 </div>
-                <div className="form-control w-full max-w-xs">
+                <div className="form-control w-full">
                     <label className="label">
                         <span className="label-text">Peso Neto Pallet 100x120 (kg)</span>
                     </label>
                     <input
                         type="text"
                         id="pesoNetoPallet100x120"
-                        className="input input-bordered w-full max-w-xs"
+                        className="input input-bordered w-full"
                         placeholder="Peso Neto Pallet 100x120 (kg)"
                         value={pesoNetoPallet100x120}
                         readOnly
                         disabled
                     />
                 </div>
-                <div className="form-control w-full max-w-xs">
+                <div className="form-control w-full">
                     <label className="label">
                         <span className="label-text">Cajas por Pallet Avión</span>
                     </label>
                     <input
                         type="text"
                         id="palletAvion"
-                        className="input input-bordered w-full max-w-xs"
+                        className="input input-bordered w-full"
                         placeholder="Introduce Cajas por Pallet Avion"
                         onChange={(e) => setPalletAvion(e.target.value)}
                         onBlur={() => handlePesoNetoPalletCalculo(palletAvion, setPesoNetoPalletAvion)}
@@ -648,14 +666,14 @@ function AdminPackaging(props) {
                     />
                 </div>
 
-                <div className="form-control w-full max-w-xs">
+                <div className="form-control w-full">
                     <label className="label">
                         <span className="label-text">Peso Neto Pallet Avión (kg)</span>
                     </label>
                     <input
                         type="text"
                         id="pesoNetoPallet80x120"
-                        className="input input-bordered w-full max-w-xs"
+                        className="input input-bordered w-full"
                         placeholder="Peso Neto Pallet Avion"
                         value={pesoNetoPalletAvion}
                         readOnly
@@ -689,13 +707,13 @@ function AdminPackaging(props) {
                     <label className="label">
                         <span className="label-text">Foto Unidad</span>
                     </label>
-                    <input type="file" className="file-input file-input-bordered max-w-xs" onChange={handleFileChange1} required />
+                    <input type="file" className="file-input file-input-bordered file-input-success w-full" onChange={handleFileChange1} required />
                 </div>
                 <div className="form-control">
                     <label className="label">
                         <span className="label-text">Foto Confección</span>
                     </label>
-                    <input type="file" className="file-input file-input-bordered max-w-xs" onChange={handleFileChange2} required />
+                    <input type="file" className="file-input file-input-bordered file-input-success w-full" onChange={handleFileChange2} required />
                 </div>
                 <div className='mx-auto md:col-start-2 mt-5 '>
                     <button onClick={handleSubmit} type="button" className="btn btn-outline btn-success">Crear Packaging</button>
@@ -782,19 +800,20 @@ function AdminPackaging(props) {
                             <tr key={packaging.id}>
                                 <td className="py-2 px-4 border-b">
                                     <img
-                                        src={packaging.foto}
-                                        alt={packaging.nombreesp}
+                                        src={`http://catalogo.granadalapalma.com:5000/uploads/${removeAccents(packaging.categoria)}/${removeAccents(packaging.producto)}/${removeAccents(removeAsterisks(packaging.nombreesp.replace(/ /g, '_')))}/${removeAsterisks(packaging.tamano_caja)}/${packaging.calibre}/${packaging.foto}`}
+                                        alt={`Imagen de ${packaging.nombreesp}`}
                                         className="max-w-full h-auto cursor-pointer"
-                                        onClick={() => openImageModal(packaging.foto)}
+                                        onClick={(event) => openImageModal(event)}
                                     />
+
                                 </td>
                                 <td className="py-2 px-4 border-b">
                                     {packaging.foto2 ? (
                                         <img
-                                            src={packaging.foto2}
+                                            src={`http://catalogo.granadalapalma.com:5000/uploads/${removeAccents(packaging.categoria)}/${removeAccents(packaging.producto)}/${removeAccents(removeAsterisks(packaging.nombreesp.replace(/ /g, '_')))}/${removeAsterisks(packaging.tamano_caja)}/${packaging.calibre}/${packaging.foto2}`}
                                             alt={packaging.nombreesp}
                                             className="max-w-full h-auto cursor-pointer"
-                                            onClick={() => openImageModal(packaging.foto2)}
+                                            onClick={(event) => openImageModal(event)}
                                         />
                                     ) : (
                                         <img
@@ -875,9 +894,8 @@ function AdminPackaging(props) {
                         <img id="modal_image" alt="Modal" src={modalImageUrl} className="w-full h-full object-cover" />
                     </div>
                 </dialog>
-
             </div>
-        </div>
+        </div >
 
     );
 }

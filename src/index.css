@@ -2,3 +2,36 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Add this style to your CSS file or in a style tag within your component */
+
+/* Webkit (Chrome, Safari, Edge) */
+::-webkit-scrollbar {
+    width: 12px;
+  }
+  
+  ::-webkit-scrollbar-thumb {
+    background-color: #4a5568; /* Set your preferred thumb color */
+    border-radius: 6px;
+  }
+  
+  ::-webkit-scrollbar-thumb:hover {
+    background-color: #2d3748; /* Set a darker color for the thumb on hover */
+  }
+  
+  /* Firefox */
+  /* Note: Firefox supports a more limited set of styling properties for the scrollbar */
+  /* You can customize these based on your preferences */
+  /* For example, scrollbar-color: thumb color track color; */
+  /* For now, we'll use simple color properties for demonstration */
+  
+  /* Set the scrollbar width and color for Firefox */
+  * {
+    scrollbar-width: thin;
+    scrollbar-color: #4a5568 #f7fafc; /* Set thumb color and track color */
+  }
+  
+  /* Set a darker color for the thumb on hover in Firefox */
+  *::-moz-scrollbar-thumb:hover {
+    background-color: #2d3748;
+  }
+  
