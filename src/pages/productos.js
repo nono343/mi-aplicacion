@@ -109,32 +109,34 @@ const DetalleProducto = (props) => {
 
 
     return (
-        <div className='max-w-screen-2xl mx-auto'>
+        <div className='mt-20 py-5'>
             {/* Sección de información del producto */}
             <section className="text-gray-600 body-font">
+                <h1 className="title-font sm:text-4xl text-3xl mb-4 font-medium text-gray-900 text-center">
+                    {(() => {
+                        if (producto.categoria_nombreesp === "Tomates") {
+                            return `Tomate ${props.isSpanish ? producto.nombreesp : producto.nombreeng}`;
+                        } else {
+                            return props.isSpanish ? producto.nombreesp : producto.nombreeng;
+                        }
+                    })()}
+                </h1>
                 <div className="container mx-auto flex flex-col md:flex-row items-center">
                     <div className="lg:flex-grow md:w-1/2 lg:pl-24 md:pl-16 md:items-start md:text-left items-center text-center animate-fade-right">
-                        <h1 className="title-font sm:text-4xl text-3xl mb-4 font-medium text-gray-900">
-                            {(() => {
-                                if (producto.categoria_nombreesp === "Tomates") {
-                                    return `Tomate ${props.isSpanish ? producto.nombreesp : producto.nombreeng}`;
-                                } else {
-                                    return props.isSpanish ? producto.nombreesp : producto.nombreeng;
-                                }
-                            })()}
-                        </h1>
-                        <h2 className="title-font text-xl  mb-4 font-medium text-gray-900">
-                            {props.isSpanish ? producto.tipo : producto.nombreeng}
+                        <h2 className="title-font sm:text-2xl text-2xl mb-4 font-medium text-gray-900">
+                            {props.isSpanish ? producto.claimesp : producto.claimeng}
                         </h2>
-
-                        {(props.isSpanish ? producto.descripcionesp : producto.descripcioneng).split(/\n/).map((paragraph, index) => (
+                        <h3 className="title-font text-xl mb-4 font-medium text-gray-900">
+                            {props.isSpanish ? producto.tipo : producto.nombreeng}
+                        </h3>
+                        {(props.isSpanish ? producto.descripcionesp : producto.descripcioneng).split(/\./).map((paragraph, index) => (
                             <p key={index} className="mb-2 leading-relaxed">
                                 {paragraph}
                             </p>
                         ))}
                     </div>
                     <div className=" md:w-1/2 w-5/6 animate-fade-left">
-                        <div className="diff aspect-[9/9]">
+                        <div className="diff aspect-[12/9]">
                             <div className="diff-item-1">
                                 <img
                                     alt={producto.nombreesp || ''}

@@ -11,6 +11,8 @@ function AdminProductos() {
     const [variedadEng, setVariedadEng] = useState('');
     const [descripcionEsp, setDescripcionEsp] = useState('');
     const [descripcionEng, setDescripcionEng] = useState('');
+    const [claimEsp, setClaimEsp] = useState('');
+    const [claimEng, setClaimEng] = useState('');
     const [categoryId, setCategoryId] = useState('');
     const [monthProduction, setMonthProduction] = useState([]);
     const [products, setProducts] = useState([]);
@@ -21,6 +23,9 @@ function AdminProductos() {
         'Tomate Dulce': 'Sweet Tomatoe',
         'Tomate Asurcado Marrón': 'Brown Roasted Tomato',
         'Tomate Asurcado Rosa': 'Pink Roasted Tomato',
+        'Tomate Asurcado Antociano': 'Anthocyan Roasted Tomato',
+        'Tomate Tradicional': 'Traditional Tomato',
+
     };
 
 
@@ -82,6 +87,15 @@ function AdminProductos() {
         setDescripcionEng(event.target.value);
     };
 
+    const handleClaimEspChange = (event) => {
+        setClaimEsp(event.target.value);
+    };
+
+    const handleClaimEngChange = (event) => {
+        setClaimEng(event.target.value);
+    };
+
+
     const handleCategoryChange = (event) => {
         setCategoryId(event.target.value);
     };
@@ -106,6 +120,8 @@ function AdminProductos() {
         setVariedadEng("");
         setDescripcionEsp("");
         setDescripcionEng("");
+        setClaimEsp("");
+        setClaimEng("");
         setCategoryId("");
         setMonthProduction([]);
         setEditingProduct(null);
@@ -125,10 +141,12 @@ function AdminProductos() {
             formData.append('file2', selectedFileProduct2);
             formData.append('nombreesp', nombreEspProduct);
             formData.append('nombreeng', nombreEngProduct);
-            formData.append('variedadEsp', variedadEsp);
-            formData.append('variedadEng', variedadEng);
+            formData.append('variedadesp', variedadEsp);
+            formData.append('variedadeng', variedadEng);
             formData.append('descripcionesp', descripcionEsp);
             formData.append('descripcioneng', descripcionEng);
+            formData.append('claimesp', claimEsp);
+            formData.append('claimeng', claimEng);
             formData.append('categoria', categoryId);
 
             monthProduction.forEach((month) => {
@@ -302,7 +320,18 @@ function AdminProductos() {
                         disabled
                     />
                 </div>
-
+                <div className="form-control w-full ">
+                    <label className="label">
+                        <span className="label-text">Claim Español</span>
+                    </label>
+                    <input type="text" id="description_product_esp" className="input input-bordered w-full " placeholder="Claim Español" value={claimEsp} onChange={handleClaimEspChange} required />
+                </div>
+                <div className="form-control w-full ">
+                    <label className="label">
+                        <span className="label-text">Claim Inglés</span>
+                    </label>
+                    <input type="text" id="description_product_eng" className="input input-bordered w-full " placeholder="Claim Inglés" value={claimEng} onChange={handleClaimEngChange} required />
+                </div>
                 <div className="form-control w-full ">
                     <label className="label">
                         <span className="label-text">Descripción Producto Español</span>
@@ -382,6 +411,7 @@ function AdminProductos() {
                             <th>Nombre</th>
                             <th className="hidden md:table-cell">Nombre Inglés</th>
                             <th className="hidden md:table-cell">Variedad</th>
+                            <th className="hidden md:table-cell">Variedad Inglés</th>
                             <th className="hidden md:table-cell">Descripción</th>
                             <th className="hidden md:table-cell">Descripción Inglés</th>
                             <th>Meses de Producción</th>
@@ -417,7 +447,8 @@ function AdminProductos() {
                                     </td>
                                     <td>{product.nombreesp}</td>
                                     <td className="hidden md:table-cell">{product.nombreeng}</td>
-                                    <td className="hidden md:table-cell">{product.tipo}</td>
+                                    <td className="hidden md:table-cell">{product.variedadesp}</td>
+                                    <td className="hidden md:table-cell">{product.variedadeng}</td>
                                     <td className="hidden md:table-cell">{product.descripcionesp}</td>
                                     <td className="hidden md:table-cell">{product.descripcioneng}</td>
                                     <td>

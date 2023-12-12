@@ -337,11 +337,13 @@ def upload_product():
         descripcioneng = request.form.get('descripcioneng', '')
         variedadesp = request.form.get('variedadesp', '')
         variedadeng = request.form.get('variedadeng', '')
+        claimesp = request.form.get('claimesp', '')
+        claimeng = request.form.get('claimeng', '')
         categoria_id = request.form.get('categoria', '')
         mesesproduccion = request.form.getlist('mes_produccion')
 
         # Validar que los campos requeridos no estén vacíos
-        if not all([nombreesp, nombreeng, descripcionesp, descripcioneng, variedadesp, variedadeng, categoria_id, mesesproduccion]):
+        if not all([nombreesp, nombreeng, descripcionesp, descripcioneng, variedadesp, variedadeng, claimesp, claimeng, categoria_id, mesesproduccion]):
             return jsonify({'error': 'All fields are required'}), 400
 
         # Obtener el nombre de la categoría
@@ -373,6 +375,8 @@ def upload_product():
                 descripcioneng=descripcioneng,
                 variedadesp=variedadesp,
                 variedadeng=variedadeng,
+                claimesp=claimesp,
+                claimeng=claimeng,
                 categoria_id=categoria_id,
                 foto=filename,
                 foto2=filename2,
@@ -520,6 +524,8 @@ def get_products():
                 'descripcioneng': product.descripcioneng,
                 'variedadesp': product.variedadesp,
                 'variedadeng': product.variedadeng,
+                'claimesp': product.claimesp,
+                'claimeng': product.claimeng,
                 'categoria_id': product.categoria_id,
                 'foto': product.foto,
                 'foto2': product.foto2,
@@ -860,6 +866,8 @@ def get_product_info_by_category(categoria_id, producto_id):
             'descripcioneng': producto.descripcioneng,
             'variedadesp': producto.variedadesp,
             'variedadeng': producto.variedadeng,
+            'claimesp': producto.claimesp,
+            'claimeng': producto.claimeng,
             'categoria_id': producto.categoria_id,
             'categoria_nombreesp': producto.categoria_nombreesp_rel.nombreesp if producto.categoria_nombreesp_rel else None,
             'foto': producto.foto,

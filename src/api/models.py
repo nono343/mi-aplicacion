@@ -71,6 +71,8 @@ class Productos(db.Model):
     descripcioneng = db.Column(db.Text, nullable=False)
     variedadesp = db.Column(db.String(80), nullable=False)
     variedadeng = db.Column(db.String(80), nullable=False)
+    claimesp = db.Column(db.String(80), nullable=False)
+    claimeng = db.Column(db.String(80), nullable=False)
     categoria_id = db.Column(db.Integer, db.ForeignKey('categorias.id'), nullable=False)
     foto = db.Column(db.String(120), nullable=False)
     foto2 = db.Column(db.String(120), nullable=True)
@@ -78,13 +80,15 @@ class Productos(db.Model):
     categoria_nombreesp_rel = db.relationship('Categorias', backref=db.backref('productos_rel', lazy=True))
     packagings = db.relationship('Packagings', backref='producto', cascade='all, delete-orphan')
 
-    def __init__(self, nombreesp, nombreeng, descripcionesp, descripcioneng, variedadesp, variedadeng, categoria_id, foto, foto2, meses_produccion):
+    def __init__(self, nombreesp, nombreeng, descripcionesp, descripcioneng, variedadesp, variedadeng, claimesp, claimeng, categoria_id, foto, foto2, meses_produccion):
         self.nombreesp = nombreesp
         self.nombreeng = nombreeng
         self.descripcionesp = descripcionesp
         self.descripcioneng = descripcioneng
         self.variedadesp = variedadesp
         self.variedadeng = variedadeng
+        self.claimesp = claimesp
+        self.claimeng = claimeng
         self.categoria_id = categoria_id
         self.foto = foto
         self.foto2 = foto2
@@ -99,13 +103,14 @@ class Productos(db.Model):
             'descripcioneng': self.descripcioneng,
             'variedadesp': self.variedadesp,
             'variedadeng': self.variedadeng,
+            'claimesp': self.claimesp,
+            'claimeng': self.claimeng,
             'categoria_id': self.categoria_id,
             'categoria_nombreesp': self.categoria.nombreesp,
             'foto': self.foto,
             'foto2': self.foto2,
             'meses_produccion': self.meses_produccion.split(',') if self.meses_produccion else [],
             'packagings': [packaging.serialize() for packaging in self.packagings],
-
         }
 
     def __repr__(self):

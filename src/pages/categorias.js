@@ -42,7 +42,7 @@ const ProductosPorCategoria = (props) => {
 
         </h2>
 
-        <div className="grid gap-6 md:mx-auto md:w-8/12 lg:w-full lg:grid-cols-4">
+        <div className="grid gap-6 md:mx-auto md:w-8/12 lg:w-10/12 lg:grid-cols-3">
           {productos.map((producto, index) => (
             <Link
               key={producto.id}
@@ -50,7 +50,7 @@ const ProductosPorCategoria = (props) => {
               className="group space-y-1 border border-gray-100 dark:border-gray-700 rounded-3xl bg-white dark:bg-gray-800 px-8 py-12 text-center shadow-2xl shadow-gray-600/10 dark:shadow-none transition-transform transform hover:scale-105 duration-500 ease-in-out hover:shadow-2xl hover:border-green-400"
             >
               <img
-                className="mx-auto " 
+                className="mx-auto" 
                 src={`http://catalogo.granadalapalma.com:5000/uploads/${removeAccents(producto.categoria_nombreesp)}/${removeAccents(producto.nombreesp)}/${producto.foto}`}
                 alt={producto.nombreesp}
                 loading="lazy"
@@ -59,7 +59,7 @@ const ProductosPorCategoria = (props) => {
                 {props.isSpanish ? producto.nombreesp : producto.nombreeng}
               </h3>
               <h5 className="font-semibold text-gray-800 dark:text-white">
-                {props.isSpanish ? producto.tipo : producto.nombreeng}
+                {props.isSpanish ? producto.variedadesp : producto.variedadeng}
               </h5>
 
             </Link>

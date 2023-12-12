@@ -44,9 +44,9 @@ const removeAsterisks = (str) => {
         />
       </div>
       {searchResults.length > 0 && searchTerm.trim() !== '' && (
-        <div className=" py-5  mx-auto animate-fade">
+        <div className=" py-5 mx-auto animate-fade">
           <div className="container m-auto px-6 text-gray-500 md:px-12">
-            <div className="grid gap-6 md:mx-auto md:w-8/12 lg:w-full lg:grid-cols-3">
+          <div className="grid gap-6 md:mx-auto md:w-8/12 lg:w-10/12 lg:grid-cols-3">
               {searchResults.map((product) => (
                 <Link
                   key={product.id}
