@@ -1,17 +1,12 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 
-function AdminCategorias(props) {
-    // Estado para almacenar la imagen seleccionada
+const AdminCategories = (props) =>  {
     const [selectedFileCategory, setSelectedFileCategory] = useState(null);
-    // Estados para los nombres de la categoría en español e inglés
-    const [nombreEspCategory, setNombreEspCategory] = useState("");
-    const [nombreEngCategory, setNombreEngCategory] = useState("");
-    // Estado para el nombre del archivo cargado
+    const [nameEspCategory, setNameEspCategory] = useState("");
+    const [nameEngCategory, setNameEngCategory] = useState("");
     const [uploadedFileNameCategory, setUploadedFileNameCategory] = useState("");
-    // Estado para almacenar la lista de categorías
     const [categories, setCategories] = useState([]);
-    // Estado para la categoría que se está editando
     const [editingCategory, setEditingCategory] = useState(null);
 
     // Función para obtener la lista de categorías desde el servidor
@@ -21,7 +16,7 @@ function AdminCategorias(props) {
 
     const fetchCategories = () => {
         // Realiza una solicitud GET para obtener las categorías
-        axios.get("http://catalogo.granadalapalma.com:5000/categorias")
+        axios.get("http://catalogo.granadalapalma.com:5000/categories")
             .then((response) => setCategories(response.data.categories))
             .catch((error) => console.error('Error al obtener las categorías', error));
     };
@@ -32,24 +27,24 @@ function AdminCategorias(props) {
     };
 
     // Manejador de cambio de nombre en español
-    const handleNombreEspChangeCategory = (event) => {
-        setNombreEspCategory(event.target.value);
+    const handleNameEspChangeCategory = (event) => {
+        setNameEspCategory(event.target.value);
     };
 
     // Manejador de cambio de nombre en inglés
-    const handleNombreEngChangeCategory = (event) => {
-        setNombreEngCategory(event.target.value);
+    const handleNameEngChangeCategory = (event) => {
+        setNameEngCategory(event.target.value);
     };
 
     // Función para cargar una nueva categoría
     const handleUploadCategory = async () => {
-        if (selectedFileCategory && nombreEspCategory && nombreEngCategory) {
+        if (selectedFileCategory && nameEspCategory && nameEngCategory) {
             try {
                 // Configura los datos del formulario y realiza una solicitud POST
                 const formData = new FormData();
                 formData.append('file', selectedFileCategory);
-                formData.append('nombreesp', nombreEspCategory);
-                formData.append('nombreeng', nombreEngCategory);
+                formData.append('nameesp', nameEspCategory);
+                formData.append('nameeng', nameEngCategory);
 
                 const response = await axios.post('http://catalogo.granadalapalma.com:5000/upload_category', formData, {
                     headers: { 'Content-Type': 'multipart/form-data' },
@@ -61,10 +56,10 @@ function AdminCategorias(props) {
                     setUploadedFileNameCategory(response.data.message);
                     fetchCategories();
                 } else {
-                    console.error('Error al cargar la categoría con foto');
+                    console.error('Error al cargar la categoría con photo');
                 }
             } catch (error) {
-                console.error('Error al cargar la categoría con foto', error);
+                console.error('Error al cargar la categoría con photo', error);
             }
         } else {
             console.error('Todos los campos son obligatorios');
@@ -75,7 +70,7 @@ function AdminCategorias(props) {
     const handleDeleteCategory = async (id) => {
         try {
             // Realiza una solicitud DELETE para eliminar la categoría
-            await axios.delete(`http://catalogo.granadalapalma.com:5000/categorias/${id}`);
+            await axios.delete(`http://catalogo.granadalapalma.com:5000/categories/${id}`);
             // Actualiza el estado de la lista de categorías
             fetchCategories();
         } catch (error) {
@@ -86,34 +81,35 @@ function AdminCategorias(props) {
     // Función para iniciar la edición de una categoría
     const handleEditCategory = (category) => {
         setEditingCategory(category);
-        setNombreEspCategory(category.nombreesp);
-        setNombreEngCategory(category.nombreeng);
+        setNameEspCategory(category.nameesp);
+        setNameEngCategory(category.nameeng);
         setSelectedFileCategory(null);
     };
 
     // Función para cancelar la edición de una categoría
     const handleCancelEdit = () => {
         setEditingCategory(null);
-        setNombreEspCategory("");
-        setNombreEngCategory("");
+        setNameEspCategory("");
+        setNameEngCategory("");
         setSelectedFileCategory(null);
     };
 
     // Función para actualizar una categoría después de editar
     const handleUpdateCategory = async () => {
-        if (selectedFileCategory && nombreEspCategory && nombreEngCategory) {
+        if (nameEspCategory && nameEngCategory) {
             try {
                 // Configura los datos del formulario y realiza una solicitud PUT
                 const formData = new FormData();
                 formData.append("file", selectedFileCategory);
-                formData.append("nombreesp", nombreEspCategory);
-                formData.append("nombreeng", nombreEngCategory);
+                formData.append("nameesp", nameEspCategory);
+                formData.append("nameeng", nameEngCategory);
 
                 const response = await axios.put(
-                    `http://catalogo.granadalapalma.com:5000/edit_category/${editingCategory.id}`,
+                    `http://catalogo.granadalapalma.com:5000/edit_category/${editingCategory?.id || editingCategory}`,
                     formData,
                     { headers: { "Content-Type": "multipart/form-data" } }
                 );
+                
 
                 // Verifica la respuesta del servidor
                 if (response.status === 200) {
@@ -121,14 +117,14 @@ function AdminCategorias(props) {
                     setUploadedFileNameCategory(response.data.message);
                     fetchCategories();
                     setEditingCategory(null);
-                    setNombreEspCategory("");
-                    setNombreEngCategory("");
+                    setNameEspCategory("");
+                    setNameEngCategory("");
                     setSelectedFileCategory(null);
                 } else {
-                    console.error("Error al cargar la categoría con foto");
+                    console.error("Error al cargar la categoría con photo");
                 }
             } catch (error) {
-                console.error("Error al cargar la categoría con foto", error);
+                console.error("Error al cargar la categoría con photo", error);
             }
         } else {
             console.error("Todos los campos son obligatorios");
@@ -143,7 +139,7 @@ function AdminCategorias(props) {
                         <span className="label-text">Nombre Categoría Español</span>
                     </label>
 
-                    <input type="text" id="name_esp" className="input input-bordered w-full" placeholder="Nombre Categoría Español" onChange={handleNombreEspChangeCategory} required />
+                    <input type="text" id="name_esp" className="input input-bordered w-full" placeholder="Nombre Categoría Español" onChange={handleNameEspChangeCategory} required />
                 </div>
 
                 <div className="form-control w-full">
@@ -151,7 +147,7 @@ function AdminCategorias(props) {
                         <span className="label-text">Nombre Categoría Inglés</span>
                     </label>
 
-                    <input type="text" id="name_eng" className="input input-bordered w-full" placeholder="Nombre Categoría Inglés" onChange={handleNombreEngChangeCategory} required />
+                    <input type="text" id="name_eng" className="input input-bordered w-full" placeholder="Nombre Categoría Inglés" onChange={handleNameEngChangeCategory} required />
                 </div>
 
                 <div className="form-control w-full">
@@ -182,13 +178,13 @@ function AdminCategorias(props) {
                         {categories.map((category) => (
                             <tr key={category.id}>
                                 <td className="sm:w-1/4">
-                                    {category.foto && (
+                                    {category.photo && (
                                         <div className="flex items-center gap-3">
                                             <div className="avatar">
                                                 <div className="mask mask-squircle w-12 h-12">
                                                     <img
-                                                        src={`http://catalogo.granadalapalma.com:5000/uploads/${category.nombreesp}/${category.foto}`}
-                                                        alt={category.nombreesp}
+                                                        src={`http://catalogo.granadalapalma.com:5000/uploads/${category.nameesp}/${category.photo}`}
+                                                        alt={category.nameesp}
                                                         className="max-w-full h-auto"
                                                     />
                                                 </div>
@@ -196,8 +192,8 @@ function AdminCategorias(props) {
                                         </div>
                                     )}
                                 </td>
-                                <td className="sm:w-1/4">{category.nombreesp}</td>
-                                <td className="sm:w-1/4">{category.nombreeng}</td>
+                                <td className="sm:w-1/4">{category.nameesp}</td>
+                                <td className="sm:w-1/4">{category.nameeng}</td>
                                 <td className="sm:w-1/4">
                                     <button
                                         onClick={() => handleEditCategory(category)}
@@ -230,8 +226,8 @@ function AdminCategorias(props) {
                                 id="edit_name_esp"
                                 className="input input-bordered w-full"
                                 placeholder="Nombre Categoría Español"
-                                onChange={handleNombreEspChangeCategory}
-                                value={nombreEspCategory}
+                                onChange={handleNameEspChangeCategory}
+                                value={nameEspCategory}
                                 required
                             />
                         </div>
@@ -242,8 +238,8 @@ function AdminCategorias(props) {
                                 id="edit_name_eng"
                                 className="input input-bordered w-full"
                                 placeholder="Nombre Categoría Inglés"
-                                onChange={handleNombreEngChangeCategory}
-                                value={nombreEngCategory}
+                                onChange={handleNameEngChangeCategory}
+                                value={nameEngCategory}
                                 required
                             />
                         </div>
@@ -279,4 +275,4 @@ function AdminCategorias(props) {
     );
 }
 
-export default AdminCategorias;
+export default AdminCategories;

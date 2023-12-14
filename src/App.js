@@ -3,29 +3,25 @@ import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { jwtDecode as jwt_decode } from 'jwt-decode';
 
 // Importa los componentes y hooks necesarios
-import Login from './components/Login';
-import useToken from './components/useToken';
+import Login from './components/login';
+import UseToken from './components/useToken';
 import Admin from './pages/admin';
-import Register from './components/Register';
-import Categorias from './pages/categorias';
-import Inicio from './pages/inicio';
-import DetalleProducto from './pages/productos';
-import { Navbar } from './components/Navbar';
+import Register from './components/register';
+import Categorias from './pages/categories';
+import DetalleProducto from './pages/products';
+import Init from './pages/init';
+import Navbar from './components/navbar';
+
 
 function App() {
   // Obtiene el token y las funciones relacionadas con el token usando el hook useToken
-  const { token, removeToken, setToken } = useToken();
+  const { token, removeToken, setToken } = UseToken();
 
   // Decodificar el token para acceder a sus campos
   const decodedToken = token ? jwt_decode(token) : null;
 
   // Verificar si el usuario es un administrador
   const isAdmin = decodedToken && decodedToken.isAdmin === 'admin';
-
-  // Imprime el token decodificado
-  if (decodedToken) {
-    console.log('Decoded Token:', decodedToken);
-  }
 
   const [isSpanish, setIsSpanish] = useState(true);
 
@@ -51,9 +47,9 @@ function App() {
         {/* Rutas específicas */}
         {token ? (
           <>
-            <Route path='/inicio' element={<Inicio token={token} setToken={setToken} isSpanish={isSpanish}  />} />
+            <Route path='/inicio' element={<Init token={token} setToken={setToken} isSpanish={isSpanish}  />} />
             <Route path='/categorias/:id' element={<Categorias token={token} setToken={setToken} isSpanish={isSpanish}  />} />
-            <Route path='/categorias/:categoria_id/productos/:producto_id' element={<DetalleProducto token={token} setToken={setToken} isSpanish={isSpanish}/>} />
+            <Route path='/categories/:category_id/products/:product_id' element={<DetalleProducto token={token} setToken={setToken} isSpanish={isSpanish}/>} />
             {/* Ruta de administrador */}
             {isAdmin && <Route path='/admin' element={<Admin token={token} setToken={setToken} />} />}
           </>

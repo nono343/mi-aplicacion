@@ -12,7 +12,7 @@ const ProductSearch = ({ isSpanish, setIsSearching }) => {
     setSearchTerm(term);
 
     try {
-      const response = await axios.get(`http://catalogo.granadalapalma.com:5000/productos?nombre=${term}`);
+      const response = await axios.get(`http://catalogo.granadalapalma.com:5000/products?name=${term}`);
       const data = response.data;
       setSearchResults(data.products);
       setIsSearching(!!term.trim());
@@ -20,8 +20,6 @@ const ProductSearch = ({ isSpanish, setIsSearching }) => {
       console.error('Error al realizar la búsqueda:', error);
     }
   };
-
-  console.log(searchResults)
 
   const removeAccents = (str) => {
     return unorm.nfd(str).replace(/[\u0300-\u036f]/g, "");
@@ -50,18 +48,18 @@ const removeAsterisks = (str) => {
               {searchResults.map((product) => (
                 <Link
                   key={product.id}
-                  to={`/categorias/${product.categoria_id}/productos/${product.id}`}
+                  to={`/categories/${product.category_id}/products/${product.id}`}
                   onClick={() => console.log(product.id)}
                   className="group space-y-1 border border-gray-100 dark:border-gray-700 rounded-3xl bg-white dark:bg-gray-800 px-8 py-12 text-center shadow-2xl shadow-gray-600/10 dark:shadow-none transition-transform transform hover:scale-105 duration-500 ease-in-out hover:shadow-2xl hover:border-green-400"
                 >
                   <img
                     className="mx-auto w-120"
-                    src={`http://catalogo.granadalapalma.com:5000/uploads/${removeAccents(product.categoria_nombreesp)}/${removeAccents(product.nombreesp)}/${product.foto}`}
-                    alt={isSpanish ? product.nombreesp : product.nombreeng}
+                    src={`http://catalogo.granadalapalma.com:5000/uploads/${removeAccents(product.category_nameesp)}/${removeAccents(product.nameesp)}/${product.photo}`}
+                    alt={isSpanish ? product.nameesp : product.nameeng}
                     loading="lazy"
                   />
                   <h3 className="text-3xl font-semibold text-gray-800 dark:text-white">
-                    {isSpanish ? product.nombreesp : product.nombreeng}
+                    {isSpanish ? product.nameesp : product.nameeng}
                   </h3>
                 </Link>
               ))}

@@ -3,7 +3,7 @@ import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import logo from "../assets/LaPalma.png"
 
-function Register() {
+const Register = () =>  {
     const [registerForm, setRegisterForm] = useState({
         username: "",
         password: "",

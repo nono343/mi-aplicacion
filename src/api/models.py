@@ -20,7 +20,7 @@ class User(db.Model):
     username = db.Column(db.String(150), unique=True)
     password = db.Column(db.Text, nullable=False)
     isAdmin = db.Column(db.String(10), nullable=False)
-    foto = db.Column(db.String(120), nullable=True)  # Agrega la columna para la foto
+    photo = db.Column(db.String(120), nullable=True) 
 
     
     # Relación many-to-many con Packagings
@@ -31,171 +31,171 @@ class User(db.Model):
             'id': self.id,
             'username': self.username,
             'isAdmin': self.isAdmin,
-            'foto': self.foto,
+            'photo': self.photo,
         }
 
-class Categorias(db.Model):
-    __tablename__ = 'categorias'  # Nombre de la tabla en la base de datos
+class Categories(db.Model):
+    __tablename__ = 'categories'  # Nombre de la tabla en la base de datos
     id = db.Column(db.Integer, primary_key=True)
-    nombreesp = db.Column(db.String(80), nullable=False)
-    nombreeng = db.Column(db.String(80), nullable=False)
-    foto = db.Column(db.String(120), nullable=False)
-    productos = db.relationship('Productos', backref='categoria', cascade='all, delete-orphan')
+    nameesp = db.Column(db.String(80), nullable=False)
+    nameeng = db.Column(db.String(80), nullable=False)
+    photo = db.Column(db.String(120), nullable=False)
+    products = db.relationship('Products', backref='category', cascade='all, delete-orphan')
 
 
-    def __init__(self, nombreesp, nombreeng, foto):
-        self.nombreesp = nombreesp
-        self.nombreeng = nombreeng
-        self.foto = foto
+    def __init__(self, nameesp, nameeng, photo):
+        self.nameesp = nameesp
+        self.nameeng = nameeng
+        self.photo = photo
 
     def serialize(self):
         return {
             'id': self.id,
-            'nombreesp': self.nombreesp,
-            'nombreeng': self.nombreeng,
-            'foto': self.foto,
+            'nameesp': self.nameesp,
+            'nameeng': self.nameeng,
+            'photo': self.photo,
             # Otros campos si es necesario
         }
 
     def __repr__(self):
-        return f'<Categorias {self.nombreesp}>'
+        return f'<Categories {self.nameesp}>'
 
 
-# Modelo para los productos
-class Productos(db.Model):
-    __tablename__ = 'productos'
+# Modelo para los products
+class Products(db.Model):
+    __tablename__ = 'products'
     id = db.Column(db.Integer, primary_key=True)
-    nombreesp = db.Column(db.String(80), nullable=False)
-    nombreeng = db.Column(db.String(80), nullable=False)
-    descripcionesp = db.Column(db.Text, nullable=False)
-    descripcioneng = db.Column(db.Text, nullable=False)
-    variedadesp = db.Column(db.String(80), nullable=False)
-    variedadeng = db.Column(db.String(80), nullable=False)
+    nameesp = db.Column(db.String(80), nullable=False)
+    nameeng = db.Column(db.String(80), nullable=False)
+    descriptionesp = db.Column(db.Text, nullable=False)
+    descriptioneng = db.Column(db.Text, nullable=False)
+    varietyesp = db.Column(db.String(80), nullable=True)
+    varietyeng = db.Column(db.String(80), nullable=True)
     claimesp = db.Column(db.String(80), nullable=False)
     claimeng = db.Column(db.String(80), nullable=False)
-    categoria_id = db.Column(db.Integer, db.ForeignKey('categorias.id'), nullable=False)
-    foto = db.Column(db.String(120), nullable=False)
-    foto2 = db.Column(db.String(120), nullable=True)
-    meses_produccion = db.Column(db.String(50))  
-    categoria_nombreesp_rel = db.relationship('Categorias', backref=db.backref('productos_rel', lazy=True))
-    packagings = db.relationship('Packagings', backref='producto', cascade='all, delete-orphan')
+    category_id = db.Column(db.Integer, db.ForeignKey('categories.id'), nullable=False)
+    photo = db.Column(db.String(120), nullable=False)
+    photo2 = db.Column(db.String(120), nullable=True)
+    months_production = db.Column(db.String(50))  
+    category_nameesp_rel = db.relationship('Categories', backref=db.backref('products_rel', lazy=True))
+    packagings = db.relationship('Packagings', backref='product', cascade='all, delete-orphan')
 
-    def __init__(self, nombreesp, nombreeng, descripcionesp, descripcioneng, variedadesp, variedadeng, claimesp, claimeng, categoria_id, foto, foto2, meses_produccion):
-        self.nombreesp = nombreesp
-        self.nombreeng = nombreeng
-        self.descripcionesp = descripcionesp
-        self.descripcioneng = descripcioneng
-        self.variedadesp = variedadesp
-        self.variedadeng = variedadeng
+    def __init__(self, nameesp, nameeng, descriptionesp, descriptioneng, varietyesp, varietyeng, claimesp, claimeng, category_id, photo, photo2, months_production):
+        self.nameesp = nameesp
+        self.nameeng = nameeng
+        self.descriptionesp = descriptionesp
+        self.descriptioneng = descriptioneng
+        self.varietyesp = varietyesp
+        self.varietyeng = varietyeng
         self.claimesp = claimesp
         self.claimeng = claimeng
-        self.categoria_id = categoria_id
-        self.foto = foto
-        self.foto2 = foto2
-        self.meses_produccion = meses_produccion
+        self.category_id = category_id
+        self.photo = photo
+        self.photo2 = photo2
+        self.months_production = months_production
 
     def serialize(self):
         return {
             'id': self.id,
-            'nombreesp': self.nombreesp,
-            'nombreeng': self.nombreeng,
-            'descripcionesp': self.descripcionesp,
-            'descripcioneng': self.descripcioneng,
-            'variedadesp': self.variedadesp,
-            'variedadeng': self.variedadeng,
+            'nameesp': self.nameesp,
+            'nameeng': self.nameeng,
+            'descriptionesp': self.descriptionesp,
+            'descriptioneng': self.descriptioneng,
+            'varietyesp': self.varietyesp,
+            'varietyeng': self.varietyeng,
             'claimesp': self.claimesp,
             'claimeng': self.claimeng,
-            'categoria_id': self.categoria_id,
-            'categoria_nombreesp': self.categoria.nombreesp,
-            'foto': self.foto,
-            'foto2': self.foto2,
-            'meses_produccion': self.meses_produccion.split(',') if self.meses_produccion else [],
+            'category_id': self.category_id,
+            'category_nameesp': self.category.nameesp,
+            'photo': self.photo,
+            'photo2': self.photo2,
+            'months_production': self.months_production.split(',') if self.months_production else [],
             'packagings': [packaging.serialize() for packaging in self.packagings],
         }
 
     def __repr__(self):
-        return f'<Productos {self.nombreesp}>'
+        return f'<Products {self.nameesp}>'
 
 
 class Packagings(db.Model):
     __tablename__ = 'packagings'
     id = db.Column(db.Integer, primary_key=True)
-    nombreesp = db.Column(db.String(80), nullable=False)
-    nombreeng = db.Column(db.String(80), nullable=False)
-    marca = db.Column(db.String(80), nullable=False)
-    presentacion = db.Column(db.String(80), nullable=False)
-    calibre = db.Column(db.String(80), nullable=False)
-    peso_presentacion_g = db.Column(db.String(80), nullable=False)
-    peso_neto_kg = db.Column(db.String(80), nullable=False)
-    tamano_caja = db.Column(db.String(80), nullable=False)
+    nameesp = db.Column(db.String(80), nullable=False)
+    nameeng = db.Column(db.String(80), nullable=False)
+    brand = db.Column(db.String(80), nullable=False)
+    presentation = db.Column(db.String(80), nullable=False)
+    caliber = db.Column(db.String(80), nullable=False)
+    weight_presentation_g = db.Column(db.String(80), nullable=False)
+    net_weight_kg = db.Column(db.String(80), nullable=False)
+    box_size = db.Column(db.String(80), nullable=False)
     pallet_80x120 = db.Column(db.String(80), nullable=False)
-    peso_neto_pallet_80x120_kg = db.Column(db.String(80), nullable=False)
+    net_weight_pallet_80x120_kg = db.Column(db.String(80), nullable=False)
     pallet_100x120 = db.Column(db.String(80), nullable=False)
-    peso_neto_pallet_100x120_kg = db.Column(db.String(80), nullable=False)
-    pallet_avion = db.Column(db.String(80), nullable=False)
-    peso_neto_pallet_avion = db.Column(db.String(80), nullable=False)
+    net_weight_pallet_100x120_kg = db.Column(db.String(80), nullable=False)
+    pallet_plane = db.Column(db.String(80), nullable=False)
+    net_weight_pallet_plane_kg = db.Column(db.String(80), nullable=False)
+    photo = db.Column(db.String(120), nullable=False)  
+    photo2 = db.Column(db.String(120), nullable=True)
+    product_id = db.Column(db.Integer, db.ForeignKey('products.id', name='fk_packagings_product_id', ondelete='CASCADE'), nullable=False)
+    category_id = db.Column(db.Integer, nullable=False)  # Nueva columna para el ID de la categoría
+    category_nameesp = db.Column(db.String(80), nullable=False)  # Nueva columna para el nombre de la categoría
+    product_nameesp = db.Column(db.String(80), nullable=False)  # Nueva columna para el nombre del product
 
-    foto = db.Column(db.String(120), nullable=False)  
-    foto2 = db.Column(db.String(120), nullable=True)
-
-    producto_id = db.Column(db.Integer, db.ForeignKey('productos.id', name='fk_packagings_producto_id', ondelete='CASCADE'), nullable=False)
-
-    categoria_id = db.Column(db.Integer, nullable=False)  # Nueva columna para el ID de la categoría
-    categoria_nombreesp = db.Column(db.String(80), nullable=False)  # Nueva columna para el nombre de la categoría
-    producto_nombreesp = db.Column(db.String(80), nullable=False)  # Nueva columna para el nombre del producto
-
-    def __init__(self, nombreesp, nombreeng, marca, presentacion, calibre, peso_presentacion_g, peso_neto_kg,
-                 tamano_caja, pallet_80x120, peso_neto_pallet_80x120_kg, pallet_100x120,
-                 peso_neto_pallet_100x120_kg, pallet_avion, peso_neto_pallet_avion, foto, foto2, producto_id):
-        self.nombreesp = nombreesp
-        self.nombreeng = nombreeng
-        self.marca = marca
-        self.presentacion = presentacion
-        self.calibre = calibre
-        self.peso_presentacion_g = peso_presentacion_g
-        self.peso_neto_kg = peso_neto_kg
-        self.tamano_caja = tamano_caja
+    def __init__(self, nameesp, nameeng, brand, presentation, caliber, weight_presentation_g, net_weight_kg,
+                 box_size, pallet_80x120, net_weight_pallet_80x120_kg, pallet_100x120,
+                 net_weight_pallet_100x120_kg, pallet_plane, net_weight_pallet_plane_kg, photo, photo2, product_id):
+        
+        self.nameesp = nameesp
+        self.nameeng = nameeng
+        self.brand = brand
+        self.presentation = presentation
+        self.caliber = caliber
+        self.weight_presentation_g = weight_presentation_g
+        self.net_weight_kg = net_weight_kg
+        self.box_size = box_size
         self.pallet_80x120 = pallet_80x120
-        self.peso_neto_pallet_80x120_kg = peso_neto_pallet_80x120_kg
+        self.net_weight_pallet_80x120_kg = net_weight_pallet_80x120_kg
         self.pallet_100x120 = pallet_100x120
-        self.peso_neto_pallet_100x120_kg = peso_neto_pallet_100x120_kg
-        self.pallet_avion = pallet_avion
-        self.peso_neto_pallet_avion = peso_neto_pallet_avion
-        self.foto = foto
-        self.foto2 = foto2
-        self.producto_id = producto_id
+        self.net_weight_pallet_100x120_kg = net_weight_pallet_100x120_kg
+        self.pallet_plane = pallet_plane
+        self.net_weight_pallet_plane_kg = net_weight_pallet_plane_kg
+        self.photo = photo
+        self.photo2 = photo2
+        self.product_id = product_id
 
-        # Automatiza la asignación de la categoría del producto al packaging
-        producto = Productos.query.get(producto_id)
-        if producto:
-            self.categoria_id = producto.categoria_id
-            self.categoria_nombreesp = producto.categoria.nombreesp
-            self.producto_nombreesp = producto.nombreesp
+        # Automatiza la asignación de la categoría del product al packaging
+        product = Products.query.get(product_id)
+        if product:
+            self.category_id = product.category_id
+            self.category_nameesp = product.category.nameesp
+            self.product_nameesp = product.nameesp
 
     def serialize(self):
         return {
             'id': self.id,
-            'nombreesp': self.nombreesp,
-            'nombreeng': self.nombreeng,
-            'marca': self.marca,
-            'presentacion': self.presentacion,
-            'calibre': self.calibre,
-            'peso_presentacion_g': self.peso_presentacion_g,
-            'peso_neto_kg': self.peso_neto_kg,
-            'tamano_caja': self.tamano_caja,
+            'nameesp': self.nameesp,
+            'nameeng': self.nameeng,
+            'brand': self.brand,
+            'presentation': self.presentation,
+            'caliber': self.caliber,
+            'weight_presentation_g': self.weight_presentation_g,
+            'net_weight_kg': self.net_weight_kg,
+            'box_size': self.box_size,
             'pallet_80x120': self.pallet_80x120,
-            'peso_neto_pallet_80x120_kg': self.peso_neto_pallet_80x120_kg,
+            'net_weight_pallet_80x120_kg': self.net_weight_pallet_80x120_kg,
             'pallet_100x120': self.pallet_100x120,
-            'peso_neto_pallet_100x120_kg': self.peso_neto_pallet_100x120_kg,
-            'foto': self.foto,
-            'foto2': self.foto2,
-            'producto_id': self.producto_id,
-            'categoria_id': self.categoria_id,
-            'categoria_nombreesp': self.categoria_nombreesp,
-            'producto_nombreesp': self.producto_nombreesp,
+            'net_weight_pallet_100x120_kg': self.net_weight_pallet_100x120_kg,
+            'pallet_plane': self.pallet_plane,
+            'net_weight_pallet_plane_kg': self.net_weight_pallet_plane_kg,
+            'photo': self.photo,
+            'photo2': self.photo2,
+            'product_id': self.product_id,
+            'category_id': self.category_id,
+            'category_nameesp': self.category_nameesp,
+            'product_nameesp': self.product_nameesp,
             'users': [user.serialize() for user in self.users],
             # Otros campos si es necesario
         }
 
     def __repr__(self):
-        return f'<Packagings {self.nombreesp}>'
+        return f'<Packagings {self.nameesp}>'

@@ -3,7 +3,7 @@ import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import logo from "../assets/LaPalma.png"
 
-function Login(props) {
+const Login = (props) =>  {
     const [loginForm, setloginForm] = useState({
         username: "",
         password: ""

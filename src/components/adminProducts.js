@@ -1,16 +1,16 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 
-function AdminProductos() {
+const AdminProducts = () => {
     const [selectedFileProduct, setSelectedFileProduct] = useState(null);
     const [selectedFileProduct2, setSelectedFileProduct2] = useState(null);
     const [uploadedFileNameProduct, setUploadedFileNameProduct] = useState('');
-    const [nombreEspProduct, setNombreEspProduct] = useState('');
-    const [nombreEngProduct, setNombreEngProduct] = useState('');
-    const [variedadEsp, setVariedadEsp] = useState('');
-    const [variedadEng, setVariedadEng] = useState('');
-    const [descripcionEsp, setDescripcionEsp] = useState('');
-    const [descripcionEng, setDescripcionEng] = useState('');
+    const [nameEspProduct, setNameEspProduct] = useState('');
+    const [nameEngProduct, setNameEngProduct] = useState('');
+    const [varietyEsp, setVarietyEsp] = useState('');
+    const [varietyEng, setVarietyEng] = useState('');
+    const [descriptionEsp, setDescriptionEsp] = useState('');
+    const [descriptionEng, setDescriptionEng] = useState('');
     const [claimEsp, setClaimEsp] = useState('');
     const [claimEng, setClaimEng] = useState('');
     const [categoryId, setCategoryId] = useState('');
@@ -25,11 +25,9 @@ function AdminProductos() {
         'Tomate Asurcado Rosa': 'Pink Roasted Tomato',
         'Tomate Asurcado Antociano': 'Anthocyan Roasted Tomato',
         'Tomate Tradicional': 'Traditional Tomato',
-
     };
 
 
-    console.log(products)
     // Función para obtener la lista de categorías desde el servidor
     useEffect(() => {
         fetchCategories();
@@ -37,14 +35,14 @@ function AdminProductos() {
 
     const fetchCategories = () => {
         // Realiza una solicitud GET para obtener las categorías
-        axios.get("http://catalogo.granadalapalma.com:5000/categorias")
+        axios.get("http://catalogo.granadalapalma.com:5000/categories")
             .then((response) => setCategories(response.data.categories))
             .catch((error) => console.error('Error al obtener las categorías', error));
     };
 
     useEffect(() => {
         // Fetch products when the component mounts
-        axios.get('http://catalogo.granadalapalma.com:5000/productos')
+        axios.get('http://catalogo.granadalapalma.com:5000/products')
             .then(response => setProducts(response.data.products))
             .catch(error => console.error('Error al obtener la lista de productos:', error));
     }, []);
@@ -59,32 +57,32 @@ function AdminProductos() {
         setSelectedFileProduct2(event.target.files[0]);
     };
 
-    const handleNombreEspChangeProduct = (event) => {
-        setNombreEspProduct(event.target.value);
+    const handleNameEspChangeProduct = (event) => {
+        setNameEspProduct(event.target.value);
     };
 
-    const handleNombreEngChangeProduct = (event) => {
-        setNombreEngProduct(event.target.value);
-    };
-
-
-    const handleVariedadEspChange = (event) => {
-        const selectedVariedadEsp = event.target.value;
-
-        setVariedadEsp(selectedVariedadEsp);
-        const selectedVariedadEng = variedadMapping[selectedVariedadEsp] || '';
-        setVariedadEng(selectedVariedadEng);
-
+    const handleNameEngChangeProduct = (event) => {
+        setNameEngProduct(event.target.value);
     };
 
 
+    const handleVarietyEspChange = (event) => {
+        const selectedVarietyEsp = event.target.value;
 
-    const handleDescripcionEspChange = (event) => {
-        setDescripcionEsp(event.target.value);
+        setVarietyEsp(selectedVarietyEsp);
+        const selectedVarietyEng = variedadMapping[selectedVarietyEsp] || '';
+        setVarietyEng(selectedVarietyEng);
+
     };
 
-    const handleDescripcionEngChange = (event) => {
-        setDescripcionEng(event.target.value);
+
+
+    const handleDescriptionEspChange = (event) => {
+        setDescriptionEsp(event.target.value);
+    };
+
+    const handleDescriptionEngChange = (event) => {
+        setDescriptionEng(event.target.value);
     };
 
     const handleClaimEspChange = (event) => {
@@ -114,12 +112,12 @@ function AdminProductos() {
         setSelectedFileProduct(null);
         setSelectedFileProduct2(null);
         setUploadedFileNameProduct("");
-        setNombreEspProduct("");
-        setNombreEngProduct("");
-        setVariedadEsp("");
-        setVariedadEng("");
-        setDescripcionEsp("");
-        setDescripcionEng("");
+        setNameEspProduct("");
+        setNameEngProduct("");
+        setVarietyEsp("");
+        setVarietyEng("");
+        setDescriptionEsp("");
+        setDescriptionEng("");
         setClaimEsp("");
         setClaimEng("");
         setCategoryId("");
@@ -131,26 +129,26 @@ function AdminProductos() {
     const handleUploadProduct = async () => {
         if (
             selectedFileProduct &&
-            nombreEspProduct &&
-            nombreEngProduct &&
+            nameEspProduct &&
+            nameEngProduct &&
             categoryId &&
             monthProduction.length > 0
         ) {
             const formData = new FormData();
             formData.append('file', selectedFileProduct);
             formData.append('file2', selectedFileProduct2);
-            formData.append('nombreesp', nombreEspProduct);
-            formData.append('nombreeng', nombreEngProduct);
-            formData.append('variedadesp', variedadEsp);
-            formData.append('variedadeng', variedadEng);
-            formData.append('descripcionesp', descripcionEsp);
-            formData.append('descripcioneng', descripcionEng);
+            formData.append('nameesp', nameEspProduct);
+            formData.append('nameeng', nameEngProduct);
+            formData.append('varietyesp', varietyEsp);
+            formData.append('varietyeng', varietyEng);
+            formData.append('descriptionesp', descriptionEsp);
+            formData.append('descriptioneng', descriptionEng);
             formData.append('claimesp', claimEsp);
             formData.append('claimeng', claimEng);
-            formData.append('categoria', categoryId);
+            formData.append('category', categoryId);
 
             monthProduction.forEach((month) => {
-                formData.append('mes_produccion', month);
+                formData.append('month_production', month);
             });
 
             try {
@@ -164,7 +162,7 @@ function AdminProductos() {
                     setUploadedFileNameProduct(response.data.message);
 
                     // Fetch the updated list of products right after a successful upload
-                    const updatedProductsResponse = await axios.get('http://catalogo.granadalapalma.com:5000/productos');
+                    const updatedProductsResponse = await axios.get('http://catalogo.granadalapalma.com:5000/products');
                     setProducts(updatedProductsResponse.data.products || []);
 
                     console.log('Product uploaded successfully:', response.data.message);
@@ -172,10 +170,10 @@ function AdminProductos() {
                     // Después de cargar, limpia el formulario
                     clearForm();
                 } else {
-                    console.error('Error al cargar el producto con foto');
+                    console.error('Error al cargar el producto con photo');
                 }
             } catch (error) {
-                console.error('Error al cargar el producto con foto', error);
+                console.error('Error al cargar el producto con photo', error);
             }
         } else {
             console.error('Faltan campos obligatorios para cargar el producto');
@@ -185,10 +183,10 @@ function AdminProductos() {
     const handleDelete = async (productId) => {
         try {
             // Lógica para eliminar el producto con el ID proporcionado
-            const response = await axios.delete(`http://catalogo.granadalapalma.com:5000/productos/${productId}`);
+            const response = await axios.delete(`http://catalogo.granadalapalma.com:5000/products/${productId}`);
             if (response.status === 200) {
                 // Actualizar la lista de productos después de la eliminación
-                const updatedProductsResponse = await axios.get('http://catalogo.granadalapalma.com:5000/productos');
+                const updatedProductsResponse = await axios.get('http://catalogo.granadalapalma.com:5000/products');
                 setProducts(updatedProductsResponse.data.products || []);
             } else {
                 console.error('Error al eliminar el producto');
@@ -201,13 +199,15 @@ function AdminProductos() {
     // Función para iniciar la edición de una categoría
     const handleEditProducts = (product) => {
         setEditingProduct(product);
-        setNombreEspProduct(product.nombreesp);
-        setNombreEngProduct(product.nombreeng);
-        setVariedadEsp(product.variedadesp);
-        setVariedadEng(product.variedadeng);
-        setDescripcionEsp(product.descripcionesp);
-        setDescripcionEng(product.descripcioneng);
-        setCategoryId(product.categoria_id)
+        setNameEspProduct(product.nameesp);
+        setNameEngProduct(product.nameeng);
+        setVarietyEsp(product.varietyesp);
+        setVarietyEng(product.varietyeng);
+        setClaimEsp(product.claimesp);
+        setClaimEng(product.claimeng);
+        setDescriptionEsp(product.descriptionesp);
+        setDescriptionEng(product.descriptioneng);
+        setCategoryId(product.category_id)
         setSelectedFileProduct(null);
         setSelectedFileProduct2(null);
     };
@@ -215,12 +215,14 @@ function AdminProductos() {
     // Función para cancelar la edición de una categoría
     const handleCancelEditProducts = () => {
         setEditingProduct(null);
-        setNombreEspProduct("");
-        setNombreEngProduct("");
-        setVariedadEsp("");
-        setVariedadEng("");
-        setDescripcionEsp("");
-        setDescripcionEng("");
+        setNameEspProduct("");
+        setNameEngProduct("");
+        setVarietyEsp("");
+        setVarietyEng("");
+        setClaimEsp("");
+        setClaimEng("");
+        setDescriptionEsp("");
+        setDescriptionEng("");
         setSelectedFileProduct(null);
         setSelectedFileProduct2(null);
         clearForm();
@@ -228,18 +230,20 @@ function AdminProductos() {
 
     // Función para actualizar una categoría después de editar
     const handleUpdateProduct = async () => {
-        if (selectedFileProduct && nombreEspProduct && nombreEngProduct && categoryId) {
+        if ( nameEspProduct && nameEngProduct && categoryId) {
             try {
                 const formData = new FormData();
                 formData.append('file', selectedFileProduct);
                 formData.append('file2', selectedFileProduct2);
-                formData.append('nombreesp', nombreEspProduct);
-                formData.append('nombreeng', nombreEngProduct);
-                formData.append('variedadesp', variedadEsp);
-                formData.append('variedadeng', variedadEng);
-                formData.append('descripcionesp', descripcionEsp);
-                formData.append('descripcioneng', descripcionEng);
-                formData.append('categoria', categoryId);
+                formData.append('nameesp', nameEspProduct);
+                formData.append('nameeng', nameEngProduct);
+                formData.append('varietyesp', varietyEsp);
+                formData.append('varietyeng', varietyEng);
+                formData.append('claimesp', claimEsp);
+                formData.append('claimeng', claimEng);
+                formData.append('descriptionesp', descriptionEsp);
+                formData.append('descriptioneng', descriptionEng);
+                formData.append('category', categoryId);
 
                 const response = await axios.put(
                     `http://catalogo.granadalapalma.com:5000/edit_product/${editingProduct.id}`,
@@ -250,7 +254,7 @@ function AdminProductos() {
                 // Verifica la respuesta del servidor
                 if (response.status === 200) {
                     // Actualiza el estado de la lista de categorías y reinicia los estados de edición
-                    const updatedProductsResponse = await axios.get('http://catalogo.granadalapalma.com:5000/productos');
+                    const updatedProductsResponse = await axios.get('http://catalogo.granadalapalma.com:5000/products');
                     setProducts(updatedProductsResponse.data.products || []);
 
                     console.log('Product updated successfully:', response.data.message);
@@ -258,10 +262,10 @@ function AdminProductos() {
                     // Después de actualizar, limpia el formulario
                     clearForm();
                 } else {
-                    console.error("Error al actualizar el producto con foto");
+                    console.error("Error al actualizar el producto con photo");
                 }
             } catch (error) {
-                console.error("Error al actualizar el producto con foto", error);
+                console.error("Error al actualizar el producto con photo", error);
             }
         } else {
             console.error("Todos los campos son obligatorios");
@@ -270,19 +274,19 @@ function AdminProductos() {
 
 
     return (
-        <div className='animate-flip-down mx-auto px-10'>
+        <div className='animate-flip-down mx-auto px-10 mb-5'>
             <form className="grid md:grid-cols-3 gap-6">
                 <div className="form-control w-full ">
                     <label className="label">
                         <span className="label-text">Nombre Producto Español</span>
                     </label>
-                    <input type="text" id="name_product_esp" className="input input-bordered w-full " placeholder="Nombre Producto Español" value={nombreEspProduct} onChange={handleNombreEspChangeProduct} required />
+                    <input type="text" id="name_product_esp" className="input input-bordered w-full " placeholder="Nombre Producto Español" value={nameEspProduct} onChange={handleNameEspChangeProduct} required />
                 </div>
                 <div className="form-control w-full ">
                     <label className="label">
                         <span className="label-text">Nombre Producto Inglés</span>
                     </label>
-                    <input type="text" id="name_product_eng" className="input input-bordered w-full " placeholder="Nombre Producto Inglés" value={nombreEngProduct} onChange={handleNombreEngChangeProduct} required />
+                    <input type="text" id="name_product_eng" className="input input-bordered w-full " placeholder="Nombre Producto Inglés" value={nameEngProduct} onChange={handleNameEngChangeProduct} required />
                 </div>
                 <div className="form-control w-full">
                     <label className="label">
@@ -291,8 +295,8 @@ function AdminProductos() {
                     <select
                         id="name_variedad_esp"
                         className="input input-bordered w-full"
-                        value={variedadEsp}
-                        onChange={handleVariedadEspChange}
+                        value={varietyEsp}
+                        onChange={handleVarietyEspChange}
                         required
                     >
                         <option value="" disabled>
@@ -314,7 +318,7 @@ function AdminProductos() {
                         id="name_packaging_eng"
                         className="input input-bordered w-full"
                         placeholder="Nombre Packaging Ingles"
-                        value={variedadEng}
+                        value={varietyEng}
                         readOnly
                         required
                         disabled
@@ -336,13 +340,13 @@ function AdminProductos() {
                     <label className="label">
                         <span className="label-text">Descripción Producto Español</span>
                     </label>
-                    <input type="text" id="description_product_esp" className="input input-bordered w-full " placeholder="Descripción Producto Español" value={descripcionEsp} onChange={handleDescripcionEspChange} required />
+                    <input type="text" id="description_product_esp" className="input input-bordered w-full " placeholder="Descripción Producto Español" value={descriptionEsp} onChange={handleDescriptionEspChange} required />
                 </div>
                 <div className="form-control w-full ">
                     <label className="label">
                         <span className="label-text">Descripción Producto Inglés</span>
                     </label>
-                    <input type="text" id="description_product_eng" className="input input-bordered w-full " placeholder="Descripción Producto Inglés" value={descripcionEng} onChange={handleDescripcionEngChange} required />
+                    <input type="text" id="description_product_eng" className="input input-bordered w-full " placeholder="Descripción Producto Inglés" value={descriptionEng} onChange={handleDescriptionEngChange} required />
                 </div>
                 <div className='form-control w-full "'>
                     <label className="label">
@@ -356,7 +360,7 @@ function AdminProductos() {
                         <option value="" disabled>Seleccionar categoría</option>
                         {categories && categories.length > 0 && categories.map(category => (
                             <option key={category.id} value={category.id}>
-                                {category.nombreesp} - {category.nombreeng}
+                                {category.nameesp} - {category.nameeng}
                             </option>
                         ))}
                     </select>
@@ -412,6 +416,8 @@ function AdminProductos() {
                             <th className="hidden md:table-cell">Nombre Inglés</th>
                             <th className="hidden md:table-cell">Variedad</th>
                             <th className="hidden md:table-cell">Variedad Inglés</th>
+                            <th className="hidden md:table-cell">Claim Español</th>
+                            <th className="hidden md:table-cell">Claim Inglés</th>
                             <th className="hidden md:table-cell">Descripción</th>
                             <th className="hidden md:table-cell">Descripción Inglés</th>
                             <th>Meses de Producción</th>
@@ -429,8 +435,8 @@ function AdminProductos() {
                                             <div className="avatar">
                                                 <div className="mask mask-squircle w-12 h-12">
                                                     <img
-                                                        src={`http://catalogo.granadalapalma.com:5000/uploads/${product.categoria_nombreesp}/${product.nombreesp}/${product.foto}`}
-                                                        alt={product.nombreesp} />
+                                                        src={`http://catalogo.granadalapalma.com:5000/uploads/${product.category_nameesp}/${product.nameesp}/${product.photo}`}
+                                                        alt={product.nameesp} />
                                                 </div>
                                             </div>
                                         </div>
@@ -439,21 +445,23 @@ function AdminProductos() {
                                         <div className="flex items-center gap-3">
                                             <div className="avatar">
                                                 <div className="mask mask-squircle w-12 h-12">
-                                                    <img src={`http://catalogo.granadalapalma.com:5000/uploads/${product.categoria_nombreesp}/${product.nombreesp}/${product.foto2}`}
-                                                        alt={product.nombreesp} />
+                                                    <img src={`http://catalogo.granadalapalma.com:5000/uploads/${product.category_nameesp}/${product.nameesp}/${product.photo2}`}
+                                                        alt={product.nameesp} />
                                                 </div>
                                             </div>
                                         </div>
                                     </td>
-                                    <td>{product.nombreesp}</td>
-                                    <td className="hidden md:table-cell">{product.nombreeng}</td>
-                                    <td className="hidden md:table-cell">{product.variedadesp}</td>
-                                    <td className="hidden md:table-cell">{product.variedadeng}</td>
-                                    <td className="hidden md:table-cell">{product.descripcionesp}</td>
-                                    <td className="hidden md:table-cell">{product.descripcioneng}</td>
+                                    <td>{product.nameesp}</td>
+                                    <td className="hidden md:table-cell">{product.nameeng}</td>
+                                    <td className="hidden md:table-cell">{product.varietyesp}</td>
+                                    <td className="hidden md:table-cell">{product.varietyeng}</td>
+                                    <td className="hidden md:table-cell">{product.claimesp}</td>
+                                    <td className="hidden md:table-cell">{product.claimeng}</td>
+                                    <td className="hidden md:table-cell">{product.descriptionesp}</td>
+                                    <td className="hidden md:table-cell">{product.descriptioneng}</td>
                                     <td>
-                                        {product.meses_produccion &&
-                                            product.meses_produccion.map((mes) => <span key={mes}>{mes} </span>)}
+                                        {product.months_production &&
+                                            product.months_production.map((mes) => <span key={mes}>{mes} </span>)}
                                     </td>
                                     <td>
                                         <button onClick={() => handleEditProducts(product)} className="btn btn-outline btn-warning">
@@ -482,8 +490,8 @@ function AdminProductos() {
                                     id="edit_name_esp"
                                     className="input input-bordered w-full"
                                     placeholder="Nombre Categoría Español"
-                                    onChange={handleNombreEspChangeProduct}
-                                    value={nombreEspProduct}
+                                    onChange={handleNameEspChangeProduct}
+                                    value={nameEspProduct}
                                     required
                                 />
                             </div>
@@ -493,19 +501,42 @@ function AdminProductos() {
                                     id="edit_name_eng"
                                     className="input input-bordered w-full"
                                     placeholder="Nombre Categoría Inglés"
-                                    onChange={handleNombreEngChangeProduct}
-                                    value={nombreEngProduct}
+                                    onChange={handleNameEngChangeProduct}
+                                    value={nameEngProduct}
                                     required
                                 />
                             </div>
                             <div className="form-control w-full">
                                 <input
                                     type="text"
+                                    id="edit_claim_esp"
+                                    className="input input-bordered w-full"
+                                    placeholder="Claim Español"
+                                    onChange={handleClaimEspChange}
+                                    value={claimEsp}
+                                    required
+                                />
+                            </div>
+                            <div className="form-control w-full">
+                                <input
+                                    type="text"
+                                    id="edit_claim_eng"
+                                    className="input input-bordered w-full"
+                                    placeholder="Claim Inglés"
+                                    onChange={handleClaimEngChange}
+                                    value={claimEng}
+                                    required
+                                />
+                            </div>
+
+                            <div className="form-control w-full">
+                                <input
+                                    type="text"
                                     id="edit_desc_esp"
                                     className="input input-bordered w-full"
-                                    placeholder="Nombre Categoría Español"
-                                    onChange={handleDescripcionEspChange}
-                                    value={descripcionEsp}
+                                    placeholder="Descripción Español"
+                                    onChange={handleDescriptionEspChange}
+                                    value={descriptionEsp}
                                     required
                                 />
                             </div>
@@ -514,12 +545,31 @@ function AdminProductos() {
                                     type="text"
                                     id="edit_desc_eng"
                                     className="input input-bordered w-full"
-                                    placeholder="Nombre Categoría Inglés"
-                                    onChange={handleDescripcionEngChange}
-                                    value={descripcionEng}
+                                    placeholder="Descripción Inglés"
+                                    onChange={handleDescriptionEngChange}
+                                    value={descriptionEng}
                                     required
                                 />
                             </div>
+                            <div className="form-control w-full">
+                                <label className="label">
+                                    <span className="label-text">Categoría del Producto</span>
+                                </label>
+                                <select
+                                    className="select select-bordered w-full"
+                                    value={categoryId}
+                                    onChange={(e) => setCategoryId(e.target.value)}
+                                    required
+                                >
+                                    <option value="">Selecciona una categoría</option>
+                                    {categories.map((category) => (
+                                        <option key={category.id} value={category.id}>
+                                            {category.nameesp}
+                                        </option>
+                                    ))}
+                                </select>
+                            </div>
+
                             <div className="form-control w-full">
                                 <input
                                     type="file"
@@ -558,4 +608,4 @@ function AdminProductos() {
     );
 }
 
-export default AdminProductos;
+export default AdminProducts;

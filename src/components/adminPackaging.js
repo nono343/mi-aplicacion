@@ -4,31 +4,31 @@ import logo from "../assets/LaPalma.png"
 import unorm from "unorm"; // Importa unorm
 
 
-function AdminPackaging() {
+const AdminPackaging = () =>  {
     const [selectedFilePackaging, setSelectedFilePackaging] = useState(null);
     const [selectedFilePackaging2, setSelectedFilePackaging2] = useState(null); // Added for the second file
-    const [nombreesp, setNombreEsp] = useState('');
-    const [nombreeng, setNombreEng] = useState('');
-    const [marca, setMarca] = useState('');
-    const [presentacion, setPresentacion] = useState('');
-    const [calibre, setCalibre] = useState('');
-    const [pesoPresentacion, setPesoPresentacion] = useState('');
-    const [pesoNeto, setPesoNeto] = useState('');
-    const [tamanoCaja, setTamanoCaja] = useState('');
+    const [nameEsp, setNameEsp] = useState('');
+    const [nameEng, setNameEng] = useState('');
+    const [brand, setBrand] = useState('');
+    const [presentation, setPresentation] = useState('');
+    const [caliber, setCaliber] = useState('');
+    const [weightPresentation, setPesoPresentacion] = useState('');
+    const [netWeight, setNetWeight] = useState('');
+    const [boxSize, setBoxSize] = useState('');
     const [pallet80x120, setPallet80x120] = useState('');
-    const [pesoNetoPallet80x120, setPesoNetoPallet80x120] = useState('');
+    const [netWeightPallet80x120, setNetWeightPallet80x120] = useState('');
     const [pallet100x120, setPallet100x120] = useState('');
-    const [pesoNetoPallet100x120, setPesoNetoPallet100x120] = useState('');
-    const [palletAvion, setPalletAvion] = useState('');
-    const [pesoNetoPalletAvion, setPesoNetoPalletAvion] = useState('');
-    const [productoId, setProductoId] = useState('');
+    const [netWeightPallet100x120, setNetWeightPallet100x120] = useState('');
+    const [palletPlane, setPalletPlane] = useState('');
+    const [netWeightPalletPlane, setNetWeightPalletPlane] = useState('');
+    const [productId, setProductId] = useState('');
     const [userIds, setUserIds] = useState([]);
     const [availableUsers, setAvailableUsers] = useState([]);
-    const [productIds, setProductIds] = useState(""); // Suponiendo que productIds es una cadena
+    const [productIds, setProductIds] = useState("");
     const [availableProducts, setAvailableProducts] = useState([]);
 
 
-    const nombresMappings = {
+    const nameMappings = {
         'BOLSA SNACK EN FLOWPACK': 'FLOWPACK SNACK BAG',
         'TARRINA DE CARTÓN CON TAPA': 'CARDBOARD WITH LID',
         'TARRINA DE CARTÓN CON FLOWPACK': 'CARDBOARD WITH FLOWPACK',
@@ -45,12 +45,12 @@ function AdminPackaging() {
         'GRANEL': 'LOOSE',
     };
 
-    const marcasMapping = {
+    const brandsMappings = {
         'PARCELA': 'Nombre de Marca 1',
         'LA PALMA': 'Nombre de Marca 2',
     };
 
-    const medidasPackaging = {
+    const sizesMappings = {
         '24*18*6': 'Medida 1',
         '30*20*11.5': 'Medida 2',
         '30*20*8': 'Medida 3',
@@ -72,7 +72,7 @@ function AdminPackaging() {
         '60*40*9.7': 'Medida 19'
     };
 
-    const calibreMapping = {
+    const caliberMappings = {
         'P': 'Medida 1',
         'M': 'Medida 2',
         'G': 'Medida 3',
@@ -87,33 +87,33 @@ function AdminPackaging() {
 
 
 
-    const handleNombreEspChange = (e) => {
-        const selectedNombreEsp = e.target.value;
+    const handleNameEspChange = (e) => {
+        const selectedNameEsp = e.target.value;
 
-        setNombreEsp(selectedNombreEsp);
-        const selectedNombreEng = nombresMappings[selectedNombreEsp] || '';
-        setNombreEng(selectedNombreEng);
+        setNameEsp(selectedNameEsp);
+        const selectedNameEng = nameMappings[selectedNameEsp] || '';
+        setNameEng(selectedNameEng);
 
-        if (selectedNombreEsp === 'GRANEL') {
-            setPresentacion('1');
+        if (selectedNameEsp === 'GRANEL') {
+            setPresentation('1');
         } else {
-            setPresentacion('');
+            setPresentation('');
         }
     };
 
-    const handleMarcaChange = (e) => {
-        const selectedMarca = e.target.value;
-        setMarca(selectedMarca);
+    const handleBrandChange = (e) => {
+        const selectedBrand = e.target.value;
+        setBrand(selectedBrand);
     };
 
-    const handleMedidasPackagingChange = (e) => {
-        const medidasPackaging = e.target.value;
-        setTamanoCaja(medidasPackaging);
+    const handleSizePackagingChange = (e) => {
+        const sizesMappings = e.target.value;
+        setBoxSize(sizesMappings);
     };
 
-    const handleCalibreChange = (e) => {
-        const calibreMapping = e.target.value;
-        setCalibre(calibreMapping);
+    const handleCaliberChange = (e) => {
+        const caliberMappings = e.target.value;
+        setCaliber(caliberMappings);
     };
 
     useEffect(() => {
@@ -122,7 +122,7 @@ function AdminPackaging() {
                 const usersResponse = await axios.get('http://catalogo.granadalapalma.com:5000/users');
                 setAvailableUsers(usersResponse.data.users);
 
-                const productsResponse = await axios.get('http://catalogo.granadalapalma.com:5000/productos'); // Cambiado de 'products' a 'productos'
+                const productsResponse = await axios.get('http://catalogo.granadalapalma.com:5000/products'); // Cambiado de 'products' a 'productos'
                 setAvailableProducts(productsResponse.data.products);
             } catch (error) {
                 console.error('Error al obtener la lista de usuarios o productos:', error.response.data.error);
@@ -150,21 +150,21 @@ function AdminPackaging() {
             const formData = new FormData();
             formData.append('file', selectedFilePackaging);
             formData.append('file2', selectedFilePackaging2);
-            formData.append('nombreesp', nombreesp);
-            formData.append('nombreeng', nombreeng);
-            formData.append('marca', marca);
-            formData.append('presentacion', presentacion);
-            formData.append('calibre', calibre);
-            formData.append('peso_presentacion_g', pesoPresentacion);
-            formData.append('peso_neto_kg', pesoNeto);
-            formData.append('tamano_caja', tamanoCaja);
+            formData.append('nameesp', nameEsp);
+            formData.append('nameeng', nameEng);
+            formData.append('brand', brand);
+            formData.append('presentation', presentation);
+            formData.append('caliber', caliber);
+            formData.append('weight_presentation_g', weightPresentation);
+            formData.append('net_weight_kg', netWeight);
+            formData.append('box_size', boxSize);
             formData.append('pallet_80x120', pallet80x120);
-            formData.append('peso_neto_pallet_80x120_kg', pesoNetoPallet80x120);
+            formData.append('net_weight_pallet_80x120_kg', netWeightPallet80x120);
             formData.append('pallet_100x120', pallet100x120);
-            formData.append('peso_neto_pallet_100x120_kg', pesoNetoPallet100x120);
-            formData.append('pallet_avion', palletAvion);
-            formData.append('peso_neto_pallet_avion', pesoNetoPalletAvion);
-            formData.append('producto_id', productIds);
+            formData.append('net_weight_pallet_100x120_kg', netWeightPallet100x120);
+            formData.append('pallet_plane', palletPlane);
+            formData.append('net_weight_pallet_plane_kg', netWeightPalletPlane);
+            formData.append('product_id', productIds);
 
             userIds.forEach((userId) => {
                 formData.append('user_ids', userId);
@@ -181,7 +181,7 @@ function AdminPackaging() {
                 // Cambia el estado para activar el useEffect y recargar los datos
                 setUpdatedPackaging(new Date());
                 // Cambia el estado para activar la actualización de filteredPackagings
-                setActualizacionProductos(true);
+                setUpdatedProducts(true);
             }
         } catch (error) {
             console.error('Error en la carga del embalaje:', error.response.data.error);
@@ -190,35 +190,55 @@ function AdminPackaging() {
     };
 
 
-    const handlePesoNetoCalculo = () => {
+    const handleNetWeightCalculation = () => {
         // Verifica que ambos campos tengan valores numéricos antes de calcular
-        if (!isNaN(presentacion) && !isNaN(pesoPresentacion)) {
-            const pesoNetoCalculado = (presentacion * pesoPresentacion) / 1000;
-            setPesoNeto(pesoNetoCalculado.toFixed(2)); // Ajusta la cantidad de decimales según tus necesidades
+        if (!isNaN(presentation) && !isNaN(weightPresentation)) {
+            const netWeightCalculated = (presentation * weightPresentation) / 1000;
+            setNetWeight(netWeightCalculated.toFixed(2)); // Ajusta la cantidad de decimales según tus necesidades
         }
     };
 
-    const handlePesoNetoPalletCalculo = (unidades, setPesoNetoPallet) => {
+    const handleNetWeightPalletCalculation = (units, setNetWeightPallet) => {
         // Verifica que ambos campos tengan valores numéricos antes de calcular
-        if (!isNaN(pesoNeto) && !isNaN(unidades)) {
-            const pesoNetoPalletCalculado = pesoNeto * unidades;
-            setPesoNetoPallet(pesoNetoPalletCalculado.toFixed(2)); // Ajusta la cantidad de decimales según tus necesidades
+        if (!isNaN(netWeight) && !isNaN(units)) {
+            const netWeightPalletCalculated = netWeight * units;
+            setNetWeightPallet(netWeightPalletCalculated.toFixed(2)); // Ajusta la cantidad de decimales según tus necesidades
+        }
+    };
+
+    const handlePackagingCheckboxChange = (id, type) => {
+        const stringId = String(id);
+
+        if (type === 'user') {
+            setUserIds((prevUserIds) =>
+                prevUserIds.includes(stringId)
+                    ? prevUserIds.filter((userId) => userId !== stringId)
+                    : [...prevUserIds, stringId]
+            );
+        } else if (type === 'product') {
+            setProductId((prevProductId) =>
+                prevProductId === stringId ? '' : stringId
+            );
+
+            setProductIds((prevProductIds) =>
+                prevProductIds.includes(stringId)
+                    ? prevProductIds.filter((productId) => productId !== stringId)
+                    : [...prevProductIds, stringId]
+            );
         }
     };
 
 
     const [packagingData, setPackagingData] = useState([]);
     const [updatedPackaging, setUpdatedPackaging] = useState(null);
-    const [actualizacionProductos, setActualizacionProductos] = useState(false);
+    const [updatedProducts, setUpdatedProducts] = useState(false);
 
 
     useEffect(() => {
         const fetchData = async () => {
             try {
-                const response = await axios.get('http://catalogo.granadalapalma.com:5000/productos');
+                const response = await axios.get('http://catalogo.granadalapalma.com:5000/products');
                 const data = response.data.products;
-                console.log(response.data)
-
                 setPackagingData(data);
             } catch (error) {
                 console.error('Error fetching data:', error);
@@ -228,12 +248,13 @@ function AdminPackaging() {
         fetchData();
     }, [updatedPackaging]);
 
+    console.log(packagingData)
 
-    // UseEffect para recargar datos cuando actualizacionProductos cambia
+    // UseEffect para recargar datos cuando updatedProducts cambia
     useEffect(() => {
-        if (actualizacionProductos) {
+        if (updatedProducts) {
             // Fetch the updated list of products right after successful upload
-            axios.get('http://catalogo.granadalapalma.com:5000/productos')
+            axios.get('http://catalogo.granadalapalma.com:5000/products')
                 .then((response) => {
                     setPackagingData(response.data.products);
                 })
@@ -242,9 +263,9 @@ function AdminPackaging() {
                 });
 
             // Reiniciar el estado de actualización después de cargar los productos
-            setActualizacionProductos(false);
+            setUpdatedProducts(false);
         }
-    }, [actualizacionProductos]);
+    }, [updatedProducts]);
 
 
     const handleDeletePackaging = async (packagingId) => {
@@ -261,34 +282,13 @@ function AdminPackaging() {
     };
 
 
-    const handlePackagingCheckboxChange = (id, type) => {
-        const stringId = String(id);
-
-        if (type === 'user') {
-            setUserIds((prevUserIds) =>
-                prevUserIds.includes(stringId)
-                    ? prevUserIds.filter((userId) => userId !== stringId)
-                    : [...prevUserIds, stringId]
-            );
-        } else if (type === 'product') {
-            setProductoId((prevProductId) =>
-                prevProductId === stringId ? '' : stringId
-            );
-
-            setProductIds((prevProductIds) =>
-                prevProductIds.includes(stringId)
-                    ? prevProductIds.filter((productId) => productId !== stringId)
-                    : [...prevProductIds, stringId]
-            );
-        }
-    };
 
     const [packagings, setPackagings] = useState([]);
     const [filters, setFilters] = useState({
-        nombreesp: '',
-        calibre: '',
-        marca: '',
-        nombreproducto: ''
+        nameesp: '',
+        caliber: '',
+        brand: '',
+        productname: ''
     });
 
 
@@ -305,6 +305,7 @@ function AdminPackaging() {
         }
     };
 
+    console.log(packagings)
     const getUniqueValues = (columnName) => {
         const uniqueValues = new Set(packagings.map((packaging) => packaging[columnName]));
         return Array.from(uniqueValues);
@@ -316,10 +317,10 @@ function AdminPackaging() {
 
     const filteredPackagings = packagings.filter((packaging) => {
         return (
-            (filters.nombreesp === '' || packaging.nombreesp.toLowerCase().includes(filters.nombreesp.toLowerCase())) &&
-            (filters.calibre === '' || packaging.calibre.toLowerCase() === filters.calibre.toLowerCase()) &&
-            (filters.marca === '' || packaging.marca.toLowerCase().includes(filters.marca.toLowerCase())) &&
-            (filters.nombreproducto === '' || packaging.nombreproducto.toLowerCase().includes(filters.nombreproducto.toLowerCase()))
+            (filters.nameesp === '' || packaging.nameesp.toLowerCase().includes(filters.nameesp.toLowerCase())) &&
+            (filters.caliber === '' || packaging.caliber.toLowerCase() === filters.caliber.toLowerCase()) &&
+            (filters.brand === '' || packaging.brand.toLowerCase().includes(filters.brand.toLowerCase())) &&
+            (filters.productname === '' || packaging.product.name.toLowerCase().includes(filters.productname.toLowerCase()))
 
         );
     });
@@ -444,7 +445,7 @@ function AdminPackaging() {
                         <option value="" disabled>Selecciona un producto</option>
                         {availableProducts.map((product) => (
                             <option key={product.id} value={String(product.id)}>
-                                {product.nombreesp}
+                                {product.nameesp}
                             </option>
                         ))}
                     </select>
@@ -457,14 +458,14 @@ function AdminPackaging() {
                     <select
                         id="name_packaging_esp"
                         className="input input-bordered w-full"
-                        value={nombreesp}
-                        onChange={handleNombreEspChange}
+                        value={nameEsp}
+                        onChange={handleNameEspChange}
                         required
                     >
                         <option value="" disabled>
                             Selecciona el tipo de Packaging
                         </option>
-                        {Object.keys(nombresMappings).map((nombreEspOption) => (
+                        {Object.keys(nameMappings).map((nombreEspOption) => (
                             <option key={nombreEspOption} value={nombreEspOption}>
                                 {nombreEspOption}
                             </option>
@@ -480,7 +481,7 @@ function AdminPackaging() {
                         id="name_packaging_eng"
                         className="input input-bordered w-full"
                         placeholder="Nombre Packaging Ingles"
-                        value={nombreeng}
+                        value={nameEng}
                         readOnly
                         required
                         disabled
@@ -493,15 +494,15 @@ function AdminPackaging() {
                     <select
                         id="name_marca_esp"
                         className="input input-bordered w-full"
-                        value={marca}
-                        onChange={handleMarcaChange}
+                        value={brand}
+                        onChange={handleBrandChange}
                         required
                     >
                         <option value="" disabled>
 
                             Selecciona la Marca de la Caja
                         </option>
-                        {Object.keys(marcasMapping).map((marcasOption) => (
+                        {Object.keys(brandsMappings).map((marcasOption) => (
                             <option key={marcasOption} value={marcasOption}>
                                 {marcasOption}
                             </option>
@@ -515,11 +516,11 @@ function AdminPackaging() {
                     </label>
                     <input
                         type="text"
-                        id="presentacion"
+                        id="presentation"
                         className="input input-bordered w-full"
                         placeholder="Unidades"
-                        value={presentacion}
-                        onChange={(e) => setPresentacion(e.target.value)}
+                        value={presentation}
+                        onChange={(e) => setPresentation(e.target.value)}
                         required
                     />
                 </div>
@@ -528,16 +529,16 @@ function AdminPackaging() {
                         <span className="label-text">Calibre</span>
                     </label>
                     <select
-                        id="calibre"
+                        id="caliber"
                         className="input input-bordered w-full"
-                        value={calibre}
-                        onChange={handleCalibreChange}
+                        value={caliber}
+                        onChange={handleCaliberChange}
                         required
                     >
                         <option value="" disabled>
-                            Selecciona el calibre del Producto
+                            Selecciona el caliber del Producto
                         </option>
-                        {Object.keys(calibreMapping).map((calibresOption) => (
+                        {Object.keys(caliberMappings).map((calibresOption) => (
                             <option key={calibresOption} value={calibresOption}>
                                 {calibresOption}
                             </option>
@@ -551,14 +552,14 @@ function AdminPackaging() {
                     <select
                         id="tamanocaja"
                         className="input input-bordered w-full"
-                        value={tamanoCaja}
-                        onChange={handleMedidasPackagingChange}
+                        value={boxSize}
+                        onChange={handleSizePackagingChange}
                         required
                     >
                         <option value="" disabled>
                             Selecciona la Medida de la Caja
                         </option>
-                        {Object.keys(medidasPackaging).map((medidasOption) => (
+                        {Object.keys(sizesMappings).map((medidasOption) => (
                             <option key={medidasOption} value={medidasOption}>
                                 {medidasOption}
                             </option>
@@ -576,7 +577,7 @@ function AdminPackaging() {
                         className="input input-bordered w-full"
                         placeholder="Introduce el Peso Neto Confección (g)"
                         onChange={(e) => setPesoPresentacion(e.target.value)}
-                        onBlur={handlePesoNetoCalculo}
+                        onBlur={handleNetWeightCalculation}
                         required
 
                     />
@@ -590,7 +591,7 @@ function AdminPackaging() {
                         id="pesoneto"
                         className="input input-bordered w-full"
                         placeholder="Peso Neto Confección (kg)"
-                        value={pesoNeto}
+                        value={netWeight}
                         readOnly
                         disabled
                     />
@@ -605,7 +606,7 @@ function AdminPackaging() {
                         className="input input-bordered w-full"
                         placeholder="Introduce Cajas por Pallet 80x120"
                         onChange={(e) => setPallet80x120(e.target.value)}
-                        onBlur={() => handlePesoNetoPalletCalculo(pallet80x120, setPesoNetoPallet80x120)}
+                        onBlur={() => handleNetWeightPalletCalculation(pallet80x120, setNetWeightPallet80x120)}
                         required
                     />
                 </div>
@@ -615,10 +616,10 @@ function AdminPackaging() {
                     </label>
                     <input
                         type="text"
-                        id="pesoNetoPallet80x120"
+                        id="netWeightPallet80x120"
                         className="input input-bordered w-full"
                         placeholder="Peso Neto Pallet 80x120 (kg)"
-                        value={pesoNetoPallet80x120}
+                        value={netWeightPallet80x120}
                         readOnly
                         disabled
                     />
@@ -633,7 +634,7 @@ function AdminPackaging() {
                         className="input input-bordered w-full"
                         placeholder="Unidades Por Pallet 100x120"
                         onChange={(e) => setPallet100x120(e.target.value)}
-                        onBlur={() => handlePesoNetoPalletCalculo(pallet100x120, setPesoNetoPallet100x120)}
+                        onBlur={() => handleNetWeightPalletCalculation(pallet100x120, setNetWeightPallet100x120)}
                         required
                     />
                 </div>
@@ -643,10 +644,10 @@ function AdminPackaging() {
                     </label>
                     <input
                         type="text"
-                        id="pesoNetoPallet100x120"
+                        id="netWeightPallet100x120"
                         className="input input-bordered w-full"
                         placeholder="Peso Neto Pallet 100x120 (kg)"
-                        value={pesoNetoPallet100x120}
+                        value={netWeightPallet100x120}
                         readOnly
                         disabled
                     />
@@ -657,11 +658,11 @@ function AdminPackaging() {
                     </label>
                     <input
                         type="text"
-                        id="palletAvion"
+                        id="palletPlane"
                         className="input input-bordered w-full"
                         placeholder="Introduce Cajas por Pallet Avion"
-                        onChange={(e) => setPalletAvion(e.target.value)}
-                        onBlur={() => handlePesoNetoPalletCalculo(palletAvion, setPesoNetoPalletAvion)}
+                        onChange={(e) => setPalletPlane(e.target.value)}
+                        onBlur={() => handleNetWeightPalletCalculation(palletPlane, setNetWeightPalletPlane)}
                         required
                     />
                 </div>
@@ -672,10 +673,10 @@ function AdminPackaging() {
                     </label>
                     <input
                         type="text"
-                        id="pesoNetoPallet80x120"
+                        id="netWeightPallet80x120"
                         className="input input-bordered w-full"
                         placeholder="Peso Neto Pallet Avion"
-                        value={pesoNetoPalletAvion}
+                        value={netWeightPalletPlane}
                         readOnly
                         disabled
                     />
@@ -727,12 +728,12 @@ function AdminPackaging() {
                             <th>Foto Confección</th>
                             <th>
                                 <select
-                                    value={filters.nombreproducto}
-                                    onChange={(e) => handleFilterChange('nombreproducto', e.target.value)}
+                                    value={filters.productname}
+                                    onChange={(e) => handleFilterChange('productname', e.target.value)}
                                     className="border border-gray-300 px-2 py-1"
                                 >
                                     <option value="">Seleccionar</option>
-                                    {getUniqueValues('nombreproducto').map((option) => (
+                                    {getUniqueValues('productname').map((option) => (
                                         <option key={option} value={option}>
                                             {option}
                                         </option>
@@ -742,11 +743,11 @@ function AdminPackaging() {
                             <th>
                                 <select
                                     className="border border-gray-300 px-2 py-1"
-                                    value={filters.nombreesp}
-                                    onChange={(e) => handleFilterChange('nombreesp', e.target.value)}
+                                    value={filters.nameesp}
+                                    onChange={(e) => handleFilterChange('nameesp', e.target.value)}
                                 >
                                     <option value="">Seleccionar</option>
-                                    {getUniqueValues('nombreesp').map((option) => (
+                                    {getUniqueValues('nameesp').map((option) => (
                                         <option key={option} value={option}>
                                             {option}
                                         </option>
@@ -755,12 +756,12 @@ function AdminPackaging() {
                             </th>
                             <th>
                                 <select
-                                    value={filters.marca}
-                                    onChange={(e) => handleFilterChange('marca', e.target.value)}
+                                    value={filters.brand}
+                                    onChange={(e) => handleFilterChange('brand', e.target.value)}
                                     className="border border-gray-300 px-2 py-1"
                                 >
                                     <option value="">Seleccionar</option>
-                                    {getUniqueValues('marca').map((option) => (
+                                    {getUniqueValues('brand').map((option) => (
                                         <option key={option} value={option}>
                                             {option}
                                         </option>
@@ -768,12 +769,12 @@ function AdminPackaging() {
                                 </select>
                             </th>
                             <th>                <select
-                                value={filters.calibre}
-                                onChange={(e) => handleFilterChange('calibre', e.target.value)}
+                                value={filters.caliber}
+                                onChange={(e) => handleFilterChange('caliber', e.target.value)}
                                 className="border border-gray-300 px-2 py-1"
                             >
                                 <option value="">Seleccionar Calibre</option>
-                                {getUniqueValues('calibre').map((option) => (
+                                {getUniqueValues('caliber').map((option) => (
                                     <option key={option} value={option}>
                                         {option}
                                     </option>
@@ -800,42 +801,35 @@ function AdminPackaging() {
                             <tr key={packaging.id}>
                                 <td className="py-2 px-4 border-b">
                                     <img
-                                        src={`http://catalogo.granadalapalma.com:5000/uploads/${removeAccents(packaging.categoria)}/${removeAccents(packaging.producto)}/${removeAccents(removeAsterisks(packaging.nombreesp.replace(/ /g, '_')))}/${removeAsterisks(packaging.tamano_caja)}/${packaging.calibre}/${packaging.foto}`}
-                                        alt={`Imagen de ${packaging.nombreesp}`}
+                                        src={`http://catalogo.granadalapalma.com:5000/uploads/${removeAccents(packaging.category)}/${removeAccents(packaging.product)}/${removeAccents(removeAsterisks(packaging.nameesp.replace(/ /g, '_')))}/${removeAsterisks(packaging.box_size)}/${packaging.caliber}/${packaging.photo}`}
+                                        alt={`Imagen de ${packaging.nameesp}`}
                                         className="max-w-full h-auto cursor-pointer"
                                         onClick={(event) => openImageModal(event)}
                                     />
 
                                 </td>
                                 <td className="py-2 px-4 border-b">
-                                    {packaging.foto2 ? (
-                                        <img
-                                            src={`http://catalogo.granadalapalma.com:5000/uploads/${removeAccents(packaging.categoria)}/${removeAccents(packaging.producto)}/${removeAccents(removeAsterisks(packaging.nombreesp.replace(/ /g, '_')))}/${removeAsterisks(packaging.tamano_caja)}/${packaging.calibre}/${packaging.foto2}`}
-                                            alt={packaging.nombreesp}
-                                            className="max-w-full h-auto cursor-pointer"
-                                            onClick={(event) => openImageModal(event)}
-                                        />
-                                    ) : (
-                                        <img
-                                            src={logo}
-                                            className="max-w-full h-auto cursor-pointer"
-                                        />
-                                    )}
+                                    <img
+                                        src={`http://catalogo.granadalapalma.com:5000/uploads/${removeAccents(packaging.category)}/${removeAccents(packaging.product)}/${removeAccents(removeAsterisks(packaging.nameesp.replace(/ /g, '_')))}/${removeAsterisks(packaging.box_size)}/${packaging.caliber}/${packaging.photo2}`}
+                                        alt={`Imagen de ${packaging.nameesp}`}
+                                        className="max-w-full h-auto cursor-pointer"
+                                        onClick={(event) => openImageModal(event)}
+                                    />
                                 </td>
-                                <td className="py-2 px-4 border-b">{packaging.nombreproducto}</td>
-                                <td className="py-2 px-4 border-b">{packaging.nombreesp}</td>
-                                <td className="py-2 px-4 border-b">{packaging.marca}</td>
-                                <td className="py-2 px-4 border-b">{packaging.calibre}</td>
-                                <td className="py-2 px-4 border-b">{packaging.presentacion}</td>
-                                <td className="py-2 px-4 border-b">{packaging.peso_presentacion_g}</td>
-                                <td className="py-2 px-4 border-b">{packaging.peso_neto_kg}</td>
-                                <td className="py-2 px-4 border-b">{packaging.tamano_caja}</td>
+                                <td className="py-2 px-4 border-b">{packaging.productname}</td>
+                                <td className="py-2 px-4 border-b">{packaging.nameesp}</td>
+                                <td className="py-2 px-4 border-b">{packaging.brand}</td>
+                                <td className="py-2 px-4 border-b">{packaging.caliber}</td>
+                                <td className="py-2 px-4 border-b">{packaging.presentation}</td>
+                                <td className="py-2 px-4 border-b">{packaging.weight_presentation_g}</td>
+                                <td className="py-2 px-4 border-b">{packaging.net_weight_kg}</td>
+                                <td className="py-2 px-4 border-b">{packaging.box_size}</td>
                                 <td className="py-2 px-4 border-b">{packaging.pallet_80x120}</td>
-                                <td className="py-2 px-4 border-b">{packaging.peso_neto_pallet_80x120_kg}</td>
+                                <td className="py-2 px-4 border-b">{packaging.net_weight_pallet_80x120_kg}</td>
                                 <td className="py-2 px-4 border-b">{packaging.pallet_100x120}</td>
-                                <td className="py-2 px-4 border-b">{packaging.peso_neto_pallet_100x120_kg}</td>
-                                <td className="py-2 px-4 border-b">{packaging.pallet_avion}</td>
-                                <td className="py-2 px-4 border-b">{packaging.peso_neto_pallet_avion}</td>
+                                <td className="py-2 px-4 border-b">{packaging.net_weight_pallet_100x120_kg}</td>
+                                <td className="py-2 px-4 border-b">{packaging.pallet_plane}</td>
+                                <td className="py-2 px-4 border-b">{packaging.net_weight_pallet_plane_kg}</td>
                                 <td className="py-2 px-4 border-b">
                                     {editingPackaging && editingPackaging.id === packaging.id ? (
                                         // Mostrar checkboxes para todos los usuarios disponibles en modo de edición

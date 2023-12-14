@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import AdminPackaging from '../components/adminPackaging';
-import AdminCategorias from '../components/adminCategorias';
-import AdminProductos from '../components/adminProductos';
+import AdminCategories from '../components/adminCategories';
+import AdminProducts from '../components/adminProducts';
 
 function Admin() {
 
@@ -65,12 +65,12 @@ function Admin() {
 
             {mostrarFormularioCategorias && (
 
-                <AdminCategorias />
+                <AdminCategories />
 
             )}
 
             {mostrarFormularioProductos && (
-                <AdminProductos />
+                <AdminProducts />
             )}
 
 
