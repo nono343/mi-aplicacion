@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
+import unorm from "unorm"; // Importa unorm
 
 const AdminProducts = () => {
     const [selectedFileProduct, setSelectedFileProduct] = useState(null);
@@ -284,6 +285,17 @@ const AdminProducts = () => {
     };
 
 
+    const removeAccents = (str) => {
+        return unorm.nfd(str).replace(/[\u0300-\u036f]/g, "");
+    };
+
+    const removeAsterisks = (str) => {
+        if (str === undefined) {
+            return ''; // o alguna cadena predeterminada, dependiendo de tus necesidades
+        }
+        return str.replace(/\*/g, '');
+    };
+
     return (
         <div className='animate-flip-down mx-auto px-10 mb-5'>
             <form className="grid md:grid-cols-3 gap-6">
@@ -389,12 +401,12 @@ const AdminProducts = () => {
                     <input type="file" className="file-input file-input-bordered  file-input-success w-full" onChange={handleFileChangeProduct2} required />
                 </div>
                 <div className='form-control w-full md:col-span-3 lg:col-span-2 xl:col-span-2'>
-                    <label className="block mb-2 text-sm font-medium text-gray-900 dark:text-white mt-3">
+                    <label className="block mb-2 text-sm font-medium text-gray-900 mt-3">
                         Meses de producción
                     </label>
-                    <ul className="grid grid-cols-4 lg:grid-cols-12  items-center text-sm font-medium text-gray-900 bg-white border border-gray-200 rounded-lg dark:bg-gray-700 dark:border-gray-600 dark:text-white">
+                    <ul className="grid grid-cols-4 lg:grid-cols-12  items-center text-sm font-medium text-gray-900 bg-white border border-gray-200 rounded-lg">
                         {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12].map((month, index) => (
-                            <li key={month} className={`w-full lg:w-auto border-r last:border-r-0 border-gray-200 dark:border-gray-600${index === 12 ? ' lg:col-span-2' : ''}`}>
+                            <li key={month} className={`w-full lg:w-auto border-r last:border-r-0 border-gray-200 ${index === 12 ? ' lg:col-span-2' : ''}`}>
                                 <div className="flex items-center ps-3">
                                     <input
                                         id={`month-${month}`}
@@ -406,7 +418,7 @@ const AdminProducts = () => {
                                     />
                                     <label
                                         htmlFor={`month-${month}`}
-                                        className="w-full py-3 ms-2 text-sm font-medium text-gray-900 dark:text-gray-300"
+                                        className="w-full py-3 ms-2 text-sm font-medium text-gray-900 "
                                     >{`${month}`}</label>
                                 </div>
                             </li>
@@ -423,7 +435,7 @@ const AdminProducts = () => {
                         />
                         <label
                             htmlFor="select-all"
-                            className="ml-2 text-sm font-medium text-gray-900 dark:text-gray-300"
+                            className="ml-2 text-sm font-medium text-gray-900 "
                         >
                             Selecciona todos los meses
                         </label>
@@ -461,8 +473,8 @@ const AdminProducts = () => {
                                             <div className="avatar">
                                                 <div className="mask mask-squircle w-12 h-12">
                                                     <img
-                                                        src={`http://catalogo.granadalapalma.com:5000/uploads/${product.category_nameesp}/${product.nameesp}/${product.photo}`}
-                                                        alt={product.nameesp} />
+                                    src={`http://catalogo.granadalapalma.com:5000/uploads/${removeAccents(product.category_nameesp.replace(/\s/g, '_'))}/${removeAccents(product.nameesp.replace(/\s/g, '_'))}/${product.photo}`}
+                                    alt={product.nameesp} />
                                                 </div>
                                             </div>
                                         </div>
@@ -471,7 +483,8 @@ const AdminProducts = () => {
                                         <div className="flex items-center gap-3">
                                             <div className="avatar">
                                                 <div className="mask mask-squircle w-12 h-12">
-                                                    <img src={`http://catalogo.granadalapalma.com:5000/uploads/${product.category_nameesp}/${product.nameesp}/${product.photo2}`}
+                                                    <img src={`http://catalogo.granadalapalma.com:5000/uploads/${removeAccents(product.category_nameesp.replace(/\s/g, '_'))}/${removeAccents(product.nameesp.replace(/\s/g, '_'))}/${product.photo2}`}
+
                                                         alt={product.nameesp} />
                                                 </div>
                                             </div>

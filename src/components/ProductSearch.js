@@ -44,23 +44,27 @@ const removeAsterisks = (str) => {
       {searchResults.length > 0 && searchTerm.trim() !== '' && (
         <div className=" py-5 mx-auto animate-fade">
           <div className="container m-auto px-6 text-gray-500 md:px-12">
-          <div className="grid gap-6 md:mx-auto md:w-8/12 lg:w-10/12 lg:grid-cols-3">
+          <div className="grid gap-6 md:mx-auto lg:grid-cols-3">
               {searchResults.map((product) => (
                 <Link
                   key={product.id}
                   to={`/categories/${product.category_id}/products/${product.id}`}
                   onClick={() => console.log(product.id)}
-                  className="group space-y-1 border border-gray-100 dark:border-gray-700 rounded-3xl bg-white dark:bg-gray-800 px-8 py-12 text-center shadow-2xl shadow-gray-600/10 dark:shadow-none transition-transform transform hover:scale-105 duration-500 ease-in-out hover:shadow-2xl hover:border-green-400"
+                  className="group space-y-1 border border-gray-100  rounded-3xl bg-white  px-8 py-12 text-center shadow-2xl shadow-gray-600/10  transition-transform transform hover:scale-105 duration-500 ease-in-out hover:shadow-2xl hover:border-green-400"
                 >
                   <img
                     className="mx-auto w-120"
-                    src={`http://catalogo.granadalapalma.com:5000/uploads/${removeAccents(product.category_nameesp)}/${removeAccents(product.nameesp)}/${product.photo}`}
+                    src={`http://catalogo.granadalapalma.com:5000/uploads/${removeAccents(product.category_nameesp.replace(/\s/g, '_'))}/${removeAccents(product.nameesp.replace(/\s/g, '_'))}/${product.photo}`}
                     alt={isSpanish ? product.nameesp : product.nameeng}
                     loading="lazy"
                   />
-                  <h3 className="text-3xl font-semibold text-gray-800 dark:text-white">
+                  <h3 className="text-3xl font-semibold text-gray-800 ">
                     {isSpanish ? product.nameesp : product.nameeng}
                   </h3>
+                  <h4 className="font-semibold text-gray-800 ">
+                    {isSpanish ? product.varietyesp : product.varietyeng}
+                  </h4>
+
                 </Link>
               ))}
             </div>

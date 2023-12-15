@@ -95,7 +95,7 @@ const DetalleProducto = (props) => {
             (userId && packaging.users && packaging.users.some(user => user.id === userId))
         );
     }) : [];
-    
+
 
     const removeAccents = (str) => {
         return unorm.nfd(str).replace(/[\u0300-\u036f]/g, "");
@@ -107,7 +107,7 @@ const DetalleProducto = (props) => {
         }
         return str.replace(/\*/g, '');
     };
-    
+
 
 
     return (
@@ -117,7 +117,15 @@ const DetalleProducto = (props) => {
                 <h1 className="title-font sm:text-4xl text-3xl mb-4 font-medium text-gray-900 text-center">
                     {(() => {
                         if (product.category_nameesp === "Tomates") {
-                            return `Tomate ${props.isSpanish ? product.nameesp : product.nameeng}`;
+                            const tomatoPrefix = props.isSpanish ? 'Tomate' : 'Tomato';
+                            const productName = props.isSpanish ? product.nameesp : product.nameeng;
+
+                            // Verificar si el nombre del producto ya contiene alguna variante de "Tomate" o "Tomato"
+                            const containsTomato = /Tomat(e|o)s?/i.test(productName);
+
+                            const finalProductName = containsTomato ? productName : `${tomatoPrefix} ${productName}`;
+
+                            return finalProductName;
                         } else {
                             return props.isSpanish ? product.nameesp : product.nameeng;
                         }
@@ -139,13 +147,13 @@ const DetalleProducto = (props) => {
                             <div className="diff-item-1">
                                 <img
                                     alt={product.nameesp || ''}
-                                    src={`http://catalogo.granadalapalma.com:5000/uploads/${removeAccents(product.category_nameesp)}/${removeAccents(product.nameesp)}/${product.photo2}`}
+                                    src={`http://catalogo.granadalapalma.com:5000/uploads/${removeAccents(product.category_nameesp.replace(/\s/g, '_'))}/${removeAccents(product.nameesp.replace(/\s/g, '_'))}/${product.photo}`}
                                 />
                             </div>
                             <div className="diff-item-2">
                                 <img
                                     alt={product.nameesp || ''}
-                                    src={`http://catalogo.granadalapalma.com:5000/uploads/${removeAccents(product.category_nameesp)}/${removeAccents(product.nameesp)}/${product.photo}`}
+                                    src={`http://catalogo.granadalapalma.com:5000/uploads/${removeAccents(product.category_nameesp.replace(/\s/g, '_'))}/${removeAccents(product.nameesp.replace(/\s/g, '_'))}/${product.photo2}`}
                                 />
                             </div>
                             <div className="diff-resizer"></div>
