@@ -16,7 +16,7 @@ const UseToken = () =>  {
   function removeToken() {
     localStorage.removeItem('token');
     setToken(null);
-    // Redirige a la página de inicio ("/") después de remover el token
+    // Redirige a la página de inicio ("/") después de remover el toke
     window.location.href = '/';
   }
 
