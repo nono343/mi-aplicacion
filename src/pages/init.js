@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import axios from 'axios';
-import ProductSearch from '../components/productSearch';
+import ProductSearch from '../components/ProductSearch';
 
 const Init = (props) =>  {
     const [categories, setCategories] = useState([]);

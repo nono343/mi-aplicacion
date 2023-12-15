@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
-import AdminPackaging from '../components/adminPackaging';
-import AdminCategories from '../components/adminCategories';
-import AdminProducts from '../components/adminProducts';
+import AdminPackaging from '../components/AdminPackaging';
+import AdminCategories from '../components/AdminCategories';
+import AdminProducts from '../components/AdminProducts';
 
 function Admin() {
 
