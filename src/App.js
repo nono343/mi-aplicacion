@@ -4,12 +4,12 @@ import { jwtDecode as jwt_decode } from 'jwt-decode';
 
 // Importa los componentes y hooks necesarios
 import Login from './components/Login';
-import UseToken from './components/useToken';
-import Admin from './pages/admin';
+import UseToken from './components/UseToken';
+import Admin from './pages/Admin';
 import Register from './components/Register';
-import Categorias from './pages/categories';
-import DetalleProducto from './pages/products';
-import Init from './pages/init';
+import Categorias from './pages/Categories';
+import DetalleProducto from './pages/Products';
+import Init from './pages/Init';
 import Navbar from './components/Navbar';
 
 
@@ -17,7 +17,7 @@ function App() {
   // Obtiene el token y las funciones relacionadas con el token usando el hook useToken
   const { token, removeToken, setToken } = UseToken();
 
-  // Decodificar el token para acceder a sus campos
+  // Decodificar el token para acceder a sus campo
   const decodedToken = token ? jwt_decode(token) : null;
 
   // Verificar si el usuario es un administrador
