@@ -116,6 +116,10 @@ def get_users():
     # Obtén la lista de usuarios (en este ejemplo, devuelve todos los usuarios)
     users = User.query.all()
 
+
+    # Completa la transacción con un COMMIT
+    db.session.commit()
+
     # Serializa la información de los usuarios (devuelve solo id y username)
     serialized_users = [{'id': user.id, 'username': user.username} for user in users]
     return jsonify({'users': serialized_users})
@@ -266,19 +270,29 @@ def edit_category(category_id):
 
 @api.route('/categories', methods=['GET'])
 def get_categories():
-    categories = Categories.query.all()  # Consulta todas las categorías en la base de datos
-    category_list = []
+    try:
+        categories = Categories.query.all()  # Consulta todas las categorías en la base de datos
+        category_list = []
 
-    for category in categories:
-        category_data = {
-            'id': category.id,
-            'nameesp': category.nameesp,
-            'nameeng': category.nameeng,
-            'photo': category.photo
-        }
-        category_list.append(category_data)
+        for category in categories:
+            category_data = {
+                'id': category.id,
+                'nameesp': category.nameesp,
+                'nameeng': category.nameeng,
+                'photo': category.photo
+            }
+            category_list.append(category_data)
 
-    return jsonify(categories=category_list)
+        # Completa la transacción con un COMMIT
+        db.session.commit()
+
+        return jsonify(categories=category_list)
+
+    except Exception as e:
+        # Manejar la excepción de manera adecuada, como hacer un ROLLBACK explícito si es necesario
+        print(f"Error en la consulta de categorías: {str(e)}")
+        # Puedes elegir devolver un mensaje de error específico
+        return jsonify(error="Error al obtener las categorías"), 500
 
 
 @api.route('/categories/<int:category_id>', methods=['GET'])
@@ -295,9 +309,12 @@ def get_category_by_id(category_id):
             'id': category.id,
             'nameesp': category.nameesp,
             'nameeng': category.nameeng,
-            'photo': category.photo  # Este es el name del archivo de la photo
+            'photo': category.photo  # Este es el nombre del archivo de la foto
             # Puedes agregar más campos según tus necesidades
         }
+
+        # Completa la transacción con un COMMIT
+        db.session.commit()
 
         return jsonify(category=category_data), 200
     except Exception as e:
@@ -531,8 +548,6 @@ def get_products():
                     'net_weight_pallet_plane_kg': packaging.net_weight_pallet_plane_kg,
                     'photo': packaging.photo,
                     'photo2': packaging.photo2,
-                    'photo_url': f"http://localhost:5000/uploads/{product.category_nameesp_rel.nameesp}/{product.nameesp}/{unidecode(packaging.nameesp.replace(' ', '_'))}/{packaging.box_size.replace('*', '')}/{packaging.caliber}/{packaging.photo}",
-                    'photo2_url': f"http://localhost:5000/uploads/{product.category_nameesp_rel.nameesp}/{product.nameesp}/{unidecode(packaging.nameesp.replace(' ', '_'))}/{packaging.box_size.replace('*', '')}/{packaging.caliber}/{packaging.photo2}" if packaging.photo2 else None,
                     'product_id': packaging.product_id,
                     'users': users,  # Agrega la lista de usuarios al diccionario de packaging_data
                 }
@@ -553,12 +568,13 @@ def get_products():
                 'photo': product.photo,
                 'photo2': product.photo2,
                 'category_nameesp': product.category_nameesp_rel.nameesp if product.category_nameesp_rel else None,
-                'photo_url': f"http://localhost:5000/uploads/{product.category_nameesp_rel.nameesp}/{product.nameesp}/{product.photo}",
-                'photo2_url': f"http://localhost:5000/uploads/{product.category_nameesp_rel.nameesp}/{product.nameesp}/{product.photo2}" if product.photo2 else None,
                 'packagings': packaging_list,
                 'months_production': months_production,
             }
             product_list.append(product_data)
+
+        # Completa la transacción con un COMMIT
+        db.session.commit()
 
         # Devuelve la lista de products en formato JSON
         return jsonify({'products': product_list}), 200
@@ -734,6 +750,9 @@ def get_packagings():
 
             packaging_list.append(packaging_data)
 
+        # Completa la transacción con un COMMIT
+        db.session.commit()
+
         return jsonify(packagings=packaging_list), 200
     except Exception as e:
             import traceback
@@ -787,7 +806,6 @@ def edit_packaging_users(packaging_id):
         return jsonify({'error': 'Error interno del servidor'}), 500
 
 
-# Ruta para buscar products por name dentro de una categoría
 @api.route('/categories/<int:category_id>/products', methods=['GET'])
 def search_products_in_category(category_id):
     try:
@@ -800,40 +818,41 @@ def search_products_in_category(category_id):
         if category is None:
             return jsonify({'error': 'Categoría no encontrada'}), 404
 
-        # Obtener los products de la categoría filtrando por name
+        # Obtener los productos de la categoría filtrando por nombre
         products = Products.query.filter(
             Products.category_id == category.id,
             Products.nameesp.ilike(f'%{search_term}%')
         ).all()
 
-        # Crear una lista para almacenar la información de cada product
+        # Crear una lista para almacenar la información de cada producto
         products_info = []
 
         for product in products:
-            # Formar la URL de la photo del product
-            photo_url = f"http://localhost:5000/uploads/{category.nameesp}/{product.nameesp}/{product.photo}"
 
-            # Agregar información relevante del product a la lista
-            producto_info = {
+            # Agregar información relevante del producto a la lista
+            product_info = {
                 'id': product.id,
                 'nameesp': product.nameesp,
                 'nameeng': product.nameeng,
                 'varietyesp': product.varietyesp,
                 'varietyeng': product.varietyeng,
-                'photo': product.photo,  # URL completa de la photo
+                'photo': product.photo,  # URL completa de la foto
                 'category_id': product.category_id,
                 'category_nameesp': product.category_nameesp_rel.nameesp if product.category_nameesp_rel else None,
-
-                # 'photo': photo_url,  # URL completa de la photo
                 # Puedes agregar más campos según tus necesidades
             }
-            products_info.append(producto_info)
+            products_info.append(product_info)
 
-        # Devolver la lista de products en formato JSON
+        # Completa la transacción con un COMMIT
+        db.session.commit()
+
+        # Devolver la lista de productos en formato JSON
         return jsonify({'category': {'nameesp': category.nameesp, 'nameeng': category.nameeng}, 'products': products_info})
+    
     except Exception as e:
         # Manejo de errores
         return jsonify({'error': str(e)}), 500
+
 
 
 @api.route('/categories/<int:category_id>/products/<int:product_id>', methods=['GET'])
@@ -898,6 +917,9 @@ def get_product_info_by_category(category_id, product_id):
             'packagings': packaging_list,
             'months_production': product.months_production.split(',') if product.months_production else [],
         }
+
+        # Completa la transacción con un COMMIT
+        db.session.commit()
 
         # Devuelve la información en formato JSON
         return jsonify({'product': product_data}), 200

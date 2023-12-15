@@ -139,13 +139,13 @@ const DetalleProducto = (props) => {
                             <div className="diff-item-1">
                                 <img
                                     alt={product.nameesp || ''}
-                                    src={`http://catalogo.granadalapalma.com:5000/uploads/${removeAccents(product.category_nameesp)}/${removeAccents(product.nameesp)}/${product.photo}`}
+                                    src={`http://catalogo.granadalapalma.com:5000/uploads/${removeAccents(product.category_nameesp)}/${removeAccents(product.nameesp)}/${product.photo2}`}
                                 />
                             </div>
                             <div className="diff-item-2">
                                 <img
                                     alt={product.nameesp || ''}
-                                    src={`http://catalogo.granadalapalma.com:5000/uploads/${removeAccents(product.category_nameesp)}/${removeAccents(product.nameesp)}/${product.photo2}`}
+                                    src={`http://catalogo.granadalapalma.com:5000/uploads/${removeAccents(product.category_nameesp)}/${removeAccents(product.nameesp)}/${product.photo}`}
                                 />
                             </div>
                             <div className="diff-resizer"></div>

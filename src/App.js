@@ -3,10 +3,10 @@ import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { jwtDecode as jwt_decode } from 'jwt-decode';
 
 // Importa los componentes y hooks necesarios
-import Login from './components/login';
+import Login from './components/Login';
 import UseToken from './components/useToken';
 import Admin from './pages/admin';
-import Register from './components/register';
+import Register from './components/Register';
 import Categorias from './pages/categories';
 import DetalleProducto from './pages/products';
 import Init from './pages/init';

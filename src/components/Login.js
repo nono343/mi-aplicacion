@@ -22,7 +22,7 @@ const Login = (props) =>  {
     function btnlogin(event) {
         axios({
             method: "POST",
-            url: "http://catalogo.granadalapalma.com:5000/logintoken",
+            url: "https://catalogo.granadalapalma.com:5000/logintoken",
             data: {
                 username: loginForm.username,
                 password: loginForm.password

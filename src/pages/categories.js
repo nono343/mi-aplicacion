@@ -37,7 +37,6 @@ const ProductosPorCategoria = (props) => {
       <div className="container  m-auto px-6 text-gray-500 md:px-12">
         <h2 className="mb-5 text-2xl font-bold text-gray-800 dark:text-white md:text-4xl text-center">
           {props.isSpanish ? categoryNameEsp : categoryNameEng}
-
         </h2>
 
         <div className="grid gap-6 md:mx-auto md:w-8/12 lg:w-10/12 lg:grid-cols-3">
@@ -57,7 +56,7 @@ const ProductosPorCategoria = (props) => {
                 {props.isSpanish ? product.nameesp : product.nameeng}
               </h3>
               <h5 className="font-semibold text-gray-800 dark:text-white">
-                {props.isSpanish ? product.variedadesp : product.variedadeng}
+                {props.isSpanish ? product.varietyesp : product.varietyeng}
               </h5>
 
             </Link>

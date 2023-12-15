@@ -18,6 +18,7 @@ const AdminProducts = () => {
     const [products, setProducts] = useState([]);
     const [editingProduct, setEditingProduct] = useState(null);
     const [categories, setCategories] = useState([]);
+    const [selectAll, setSelectAll] = useState(false);
 
     const variedadMapping = {
         'Tomate Dulce': 'Sweet Tomatoe',
@@ -97,13 +98,23 @@ const AdminProducts = () => {
     const handleCategoryChange = (event) => {
         setCategoryId(event.target.value);
     };
-
     const handleCheckboxChange = (month) => {
-        if (monthProduction.includes(month)) {
-            setMonthProduction((prevMonths) => prevMonths.filter((prevMonth) => prevMonth !== month));
+        if (month === "all") {
+            // Checkbox "Seleccionar Todo" seleccionado
+            setMonthProduction([1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]);
         } else {
-            setMonthProduction((prevMonths) => [...prevMonths, month]);
+            // Checkbox de mes individual seleccionado
+            if (monthProduction.includes(month)) {
+                setMonthProduction((prevMonths) => prevMonths.filter((prevMonth) => prevMonth !== month));
+            } else {
+                setMonthProduction((prevMonths) => [...prevMonths, month]);
+            }
         }
+    };
+
+    const handleSelectAll = () => {
+        // Seleccionar todos los meses
+        setMonthProduction([1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]);
     };
 
     // Función para limpiar el formulario
@@ -230,7 +241,7 @@ const AdminProducts = () => {
 
     // Función para actualizar una categoría después de editar
     const handleUpdateProduct = async () => {
-        if ( nameEspProduct && nameEngProduct && categoryId) {
+        if (nameEspProduct && nameEngProduct && categoryId) {
             try {
                 const formData = new FormData();
                 formData.append('file', selectedFileProduct);
@@ -377,13 +388,13 @@ const AdminProducts = () => {
                     </label>
                     <input type="file" className="file-input file-input-bordered  file-input-success w-full" onChange={handleFileChangeProduct2} required />
                 </div>
-                <div className='form-control w-full md:col-span-2 lg:col-span-2 xl:col-span-2'>
-                    <label htmlFor="monthSelector" className="block mb-2 text-sm font-medium text-gray-900 dark:text-white mt-3">
-                        Meses de producción:
+                <div className='form-control w-full md:col-span-3 lg:col-span-2 xl:col-span-2'>
+                    <label className="block mb-2 text-sm font-medium text-gray-900 dark:text-white mt-3">
+                        Meses de producción
                     </label>
-                    <ul className="grid grid-cols-4 lg:grid-cols-12 gap-4 items-center text-sm font-medium text-gray-900 bg-white border border-gray-200 rounded-lg dark:bg-gray-700 dark:border-gray-600 dark:text-white">
-                        {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12].map((month) => (
-                            <li key={month} className="w-full lg:w-auto border-r last:border-r-0 border-gray-200 dark:border-gray-600">
+                    <ul className="grid grid-cols-4 lg:grid-cols-12  items-center text-sm font-medium text-gray-900 bg-white border border-gray-200 rounded-lg dark:bg-gray-700 dark:border-gray-600 dark:text-white">
+                        {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12].map((month, index) => (
+                            <li key={month} className={`w-full lg:w-auto border-r last:border-r-0 border-gray-200 dark:border-gray-600${index === 12 ? ' lg:col-span-2' : ''}`}>
                                 <div className="flex items-center ps-3">
                                     <input
                                         id={`month-${month}`}
@@ -402,10 +413,25 @@ const AdminProducts = () => {
                         ))}
                     </ul>
                 </div>
+                    <div className="flex items-center ps-3 mt-10">
+                        <input
+                            id="select-all"
+                            type="checkbox"
+                            className="checkbox checkbox-success"
+                            checked={monthProduction.length === 12}
+                            onChange={() => handleSelectAll()}
+                        />
+                        <label
+                            htmlFor="select-all"
+                            className="ml-2 text-sm font-medium text-gray-900 dark:text-gray-300"
+                        >
+                            Selecciona todos los meses
+                        </label>
+                    </div>
+                <div className='flex justify-center md:col-start-2 mb-5'>
+                    <button onClick={handleUploadProduct} type="button" className="btn btn-outline btn-success">Crear Producto</button>
+                </div>
             </form>
-            <div className='flex justify-center md:col-start-2 mb-5 mt-5'>
-                <button onClick={handleUploadProduct} type="button" className="btn btn-outline btn-success">Crear Producto</button>
-            </div>
             <div className="overflow-x-auto mt-5">
                 <table className="table">
                     <thead>
