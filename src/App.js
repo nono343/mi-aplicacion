@@ -10,7 +10,7 @@ import Register from './components/Register';
 import Categorias from './pages/categories';
 import DetalleProducto from './pages/products';
 import Init from './pages/init';
-import Navbar from './components/navbar';
+import Navbar from './components/Navbar';
 
 
 function App() {
